@@ -38,6 +38,12 @@ module.exports = {
       publicPath: '/bundle.js',
     },
     compress: true,
-    port: 3000,
+    port: 8080,
+    proxy: [
+      {
+        context: ['/recipies'],
+        target: 'http://localhost:3000',
+      },
+    ],
   },
 };
