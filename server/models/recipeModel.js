@@ -1,12 +1,23 @@
 const mongoose = require('mongoose');
 const path = require('path');
+require('dotenv').config();
 
 const Schema = mongoose.Schema;
 
-require('dotenv').config();
 const MONGO_URI = process.env.MONGO_URI_KEY;
-console.log(MONGO_URI);
-console.log(process.env.STATUS);
+// console.log(MONGO_URI);
+// console.log(process.env.STATUS);
+
+mongoose
+  .connect(MONGO_URI, {
+    dbName: 'recipie',
+  })
+  .then(() => {
+    console.log('Connected to Database.');
+  })
+  .catch((err) => {
+    console.log(`ERROR: ${err}`);
+  });
 
 const recipeSchema = new Schema({
   name: { type: String, required: true },
@@ -20,4 +31,4 @@ const recipeSchema = new Schema({
 
 const Recipe = mongoose.model('recipe', recipeSchema);
 
-module.exports = Recipe;
+module.exports = { Recipe };
