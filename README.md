@@ -9,12 +9,8 @@ This is really important.
 Frontend:
 
 --App
-	-- <main>
-        --Logo
         --UserInput
-            --Liquor
-            --find my drink
             --Card Container (prop: liquor choice)
-                --Drink Card(prop: all that's in the json file)
-    --<modal>
+                --DrinkCard(prop: all that's in the json file)
+                --RecipeModal
     
