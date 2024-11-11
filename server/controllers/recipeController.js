@@ -40,7 +40,7 @@ recipeController.getRecipesByLiquor = async (req, res, next) => {
     return next({
       log: 'Error in recipeController.getAllRecipes' + error,
       status: 500,
-      message: { err: 'An error occurred while retrieving characters.' },
+      message: { err: 'An error occurred while retrieving recipies.' },
     });
   }
 };
