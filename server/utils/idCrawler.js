@@ -1,8 +1,8 @@
-const models = require('./recipeModel.js');
+const models = require('../models/recipeModel.js');
 
-const apiUrl = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=mojito';
+const apiUrl = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=Tequila';
 
-const liquorList = ['tequila', 'vodka', 'gin', 'rum', 'cognac', 'amaretto', 'vermouth', 'kahlua'];
+const liquorList = ['tequila', 'vodka', 'gin', 'rum', 'cognac', 'amaretto', 'vermouth', 'kahlua', 'whiskey'];
 fetch(apiUrl)
   .then((response) => {
     return response.json();
@@ -10,14 +10,30 @@ fetch(apiUrl)
   .then((data) => {
     console.log('GOT THIS DATA');
     console.log(data);
-    let allDrinks = [];
-    for (let i = 0; i < data.drinks.length; i++) {
-      allDrinks.push(parseDataToDatabaseObject(data.drinks[i]));
+    let max = data.drinks.length;
+    if (max > 48) {
+      max = 4;
     }
-    allDrinks;
-    console.log('INSERTING>>>>>');
-    console.log(allDrinks);
-    models.Recipe.insertMany(allDrinks);
+    for (let i = 0; i < max; i++) {
+      let newApiUrl = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${data.drinks[i].idDrink}`;
+      fetch(newApiUrl)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          let parsed = parseDataToDatabaseObject(data.drinks[0]);
+          models.Recipe.create(parsed);
+        });
+    }
+    //let allDrinks = [];
+    // for (let i = 0; i < data.drinks.length; i++) {
+    //   allDrinks.push(parseDataToDatabaseObject(data.drinks[i]));
+    // }
+    // allDrinks;
+    // console.log('INSERTING>>>>>');
+    // console.log(allDrinks);
+    // models.Recipe.insertMany(allDrinks);
   });
 
 const parseDataToDatabaseObject = (data) => {
@@ -39,8 +55,10 @@ const parseDataToDatabaseObject = (data) => {
     } else {
       amounts.push(tempIngredient);
     }
-    if (liquorList.includes(tempIngredient.toLowerCase(tempIngredient)) && liquor === '?') {
-      liquor = tempIngredient;
+    for (let i = 0; i < liquorList.length; i++) {
+      if (tempIngredient.toLowerCase().includes(liquorList[i]) && liquor === '?') {
+        liquor = liquorList[i];
+      }
     }
   }
   // Assign data to database object
