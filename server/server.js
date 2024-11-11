@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const path = require('path');
 
+const recipeRouter = require('./routers/recipeRouter.js');
+
 app.get('/dist/bundle.js', (req, res, next) => {
   return res.status(200).sendFile(path.join(__dirname, '../build/bundle.js'));
 });
@@ -11,6 +13,8 @@ app.get('/images/logo.jpg', (req, res, next) => {
     .status(200)
     .sendFile(path.join(__dirname, '../client/Images/logo.jpg'));
 });
+
+app.use('/recipe', recipeRouter);
 
 app.get('/', (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, '../client/index.html'));

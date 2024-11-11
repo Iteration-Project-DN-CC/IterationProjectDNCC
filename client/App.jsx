@@ -10,7 +10,7 @@ const App = () => {
   return (
     <div>
       <div>App!</div>
-      <UserInput />
+      <UserInput/>
 
     </div>
   );
