@@ -14,7 +14,9 @@ recipeController.getRecipesByLiquor = async (req, res, next) => {
     return next({
       log: 'no liquor query param',
       status: 400,
-      message: { err: 'server says: you have to specify a liquor query parameter.' },
+      message: {
+        err: 'server says: you have to specify a liquor query parameter.',
+      },
     });
   }
   if (!limit) {
@@ -22,8 +24,15 @@ recipeController.getRecipesByLiquor = async (req, res, next) => {
   }
 
   // Logic to fetch
+
   try {
-    const data = await models.Recipe.find({ liquor: liquor }).limit(limit).exec();
+    let data;
+    if (liquor === 'any') {
+      data = await models.Recipe.find().limit(limit).exec(); // all, this is not random, would be nice but it is just the first ones in the database
+    } else {
+      data = await models.Recipe.find({ liquor: liquor }).limit(limit).exec();
+    }
+
     console.log('Data: ', data);
     // const data = await response.json();
     // console.log(data);
@@ -33,7 +42,56 @@ recipeController.getRecipesByLiquor = async (req, res, next) => {
     return next({
       log: 'Error in recipeController.getAllRecipes' + error,
       status: 500,
-      message: { err: 'An error occurred while retrieving characters.' },
+      message: { err: 'An error occurred while retrieving recipies.' },
+    });
+  }
+};
+
+recipeController.addRecipe = async (req, res, next) => {
+  // get params
+  console.log('REQ BODY: ', req.body);
+  let { name, liquor, ingredients, recipe, instruction, description, image } =
+    req.body;
+
+  if (
+    !name ||
+    !liquor ||
+    !ingredients ||
+    !recipe ||
+    !instruction ||
+    !description ||
+    !image
+  ) {
+    return next({
+      log: 'Fields are missing',
+      status: 400,
+      message: {
+        err: 'server says: you have to specify a body with the proper fields.',
+      },
+    });
+  }
+
+  const dbFields = {
+    name, // name:name
+    liquor,
+    ingredients,
+    recipe,
+    instruction,
+    description,
+    image,
+  };
+
+  // Logic to fetch
+  try {
+    const data = await models.Recipe.create(dbFields);
+    console.log('Data: ', data);
+    res.locals.queryResults = data;
+    return next();
+  } catch (error) {
+    return next({
+      log: 'Error in recipeController.addRecipe: ' + error,
+      status: 500,
+      message: { err: 'An error occurred while adding a recipe.' },
     });
   }
 };

@@ -1,61 +1,67 @@
 import React, { useEffect, useState } from 'react';
-//need to import DrinkCard 
 import DrinkCard from './DrinkCard.jsx';
+import RecipeModal from './RecipeModal.jsx';
+
 
 const CardContainer = (props) => {
-    //input: takes in prop from User as liquor choice
+    
+    const [open, setOpen] = React.useState(false);
+    const [selectedCardData, setSelectedCardData] = React.useState({});
+    
+  const openModal = () => {
+    setOpen(true);
+  } 
+ 
 
-    //state management for the liquor 
-    const [liquor, setLiquor] = useState('any'); //initialize liquor = "any"
+  const closeModal = () => setOpen(false);
+  
 
-    //state managment for response items: tbd 
+    //state managment for response 
     const [drinks, setDrinks] = useState([]) //initially drinks is an empty array 
-
-    //make a fetch request to the server sending the liquor choice with the body  or sending any 
+ 
+    
+    
+// fetch request to the server to get drinks 
+       
     useEffect(() => {
-        //define aysnc function 
+      //define aysnc function  
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:3000/recipe')
+                //if no liquor is selected, send the fetch request with 'any' to get a random selection of drinks
+                const liquorSelected = props.drink || 'any';
+                const response = await fetch(`http://localhost:3000/recipe?liquor=${liquorSelected}&limit=45`)
                 if (!response.ok) {
-                    throw new Error ('Reponse not ok, status ...')
+                    throw new Error (`Reponse not ok, status ${response.status}`)
                 }
                 const result = await response.json();
                 //result will be an object with key recipes that an array 
-                    console.log('result', result);
-                   // result.recipes = an array of the different drinks
-                    const fetchedDrinks = result.recipes; 
-                //update state 
-                setDrinks(fetchedDrinks)
+                const fetchedDrinks = result.recipes;  // result.recipes = an array of the different drinks
+                //update state
+                setDrinks(fetchedDrinks);
+            //need catch error tched drinks: ", fetchedDrinks)
             }
             //need catch error 
             catch (error){
-                console.log("Error caught in the cardContainer" + "error")
+                console.log("Error caught in the cardContainer: " + error)
             }
         }
-        // const fetchedDrinks = [{
-        //     id: 123,
-        //     name: 'white russian', 
-        //     liquor: 'vodka',
-        //     ingredients: ['vodka', 'milk', 'ice', 'coffee liqueur'],
-        //     recipe: ['1 cup ice','2 oz vodka', '1 oz coffee liqueur'],
-        //     instruction: "Stirring gently, pour all ingredients into highball glass. Garnish.",
-        //     description: "a warm and fun drink that reminds you of....",
-        //     image: "https://images.pexels.com/photos/1194030/pexels-photo-1194030.jpeg?cs=srgb&dl=pexels-mirrographer-1194030.jpg&fm=jpg"
-        //     }
-        // ]
-        setDrinks(fetchedDrinks)
         
-s;    }, [])
-    //use useEffect to make the fetch request 
+        //call fetchdata function 
+        fetchData();
+    }, [props.drinks, props.rnd])
 
     //return the drinkCard for each drink 
     return (
-        <div>
-            {/* need to pass the props to the drink card: name, picture ... */}
-            {drinks.map((drink, index) => (
-                <DrinkCard index = {index} drink = {drink} /> 
+      
+        <div className='card-container'>
+            {/* map through the drinks array and create a drink container for each drink */}
+            {drinks.map((drink) => (
+                <DrinkCard key= {drink.id} drink={drink} openModal={() =>{ 
+                    setSelectedCardData(drink);
+                    openModal();  }} /> 
             ))}
+            {/* render the RecipeModal */}
+            <RecipeModal closeModal={closeModal} open={open} data={selectedCardData} />
         </div>
     )
 }

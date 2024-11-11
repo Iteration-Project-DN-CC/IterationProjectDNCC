@@ -8,8 +8,10 @@ import UserInput from './Component/UserInput.jsx'
 
 const App = () => {
   return (
-    <div>
-      <div>App!</div>
+    <div className = "App">
+      <div><img src="http://localhost:3000/Images/logo.jpg" className="logo" /></div>
+      <h1 className = "header"> Start Your Cocktail Journey Below</h1>
+      {/* <h2 className = "header2"> Start Your Cocktail Journey Below</h2> */}
       <UserInput/>
     </div>
   );
