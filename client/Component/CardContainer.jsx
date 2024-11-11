@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 //need to import DrinkCard 
-import DrinkCard from './DrinkCard';
+import DrinkCard from './DrinkCard.jsx';
 
-const CardContainer = ({liquor}) => {
+const CardContainer = (props) => {
     //input: takes in prop from User as liquor choice
 
     //state management for the liquor 
