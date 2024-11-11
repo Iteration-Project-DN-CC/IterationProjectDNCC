@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import CardContainer from './CardContainer.jsx';
 
-const UserInput = () => {
+function UserInput() {
 	// display 5 drinking choices inside 5 buttons
 
-	const drinks = ["Gin", "Vodka", "Whiskey", "Rum", "Tequila"];
+	const drinks = ["gin", "vodka", "whiskey", "rum", "tequila"];
 
 	const [selectedDrink, setSelectedDrink] = useState(null);
 	const [showCardDisplay, setShowCardDisplay] = useState(false);
 
+	const [randomNumber, setRandomNumber] = useState(0);
+
+	useEffect(() => {
+		setShowCardDisplay(true);
+	}, []);
+
 	// button to show the result;
 	function handleDrinkSelection(drink) {
 		setSelectedDrink(drink);
-		setShowCardDisplay(false);
+		//setShowCardDisplay(false);
+		console.log('handleDrinkSelection :', drink)
 	}
 
 	function handleFindDrinkClick(drink) {
-		// setSelectedDrink(drink);
+		setRandomNumber(Math.random())
 		setShowCardDisplay(true);
+		console.log('handleDrinkSelection :', drink)
 	}
 
 	return(
@@ -28,9 +36,11 @@ const UserInput = () => {
 						{drink}
 					</button>
 				))}
-				<button onClick={handleFindDrinkClick}>Find My Drink</button>
+				<button onClick={handleFindDrinkClick} className='findDrink'>Find My Drink</button>
 			</div>
-			{showCardDisplay && selectedDrink && (<CardContainer drink={selectedDrink} />) }
+			{/* {showCardDisplay && (<CardContainer />)} */}
+			{/* {showCardDisplay && selectedDrink && (<CardContainer drink={selectedDrink} />) } */}
+			{showCardDisplay && (<CardContainer rnd={randomNumber} drink={selectedDrink}/>)}
 		 </div>
 		)
 }

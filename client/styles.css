@@ -2,21 +2,97 @@
   background-color: white;
 } */
 head {
-  background-color: black;
+  background-color: #1f2833;
 }
 body {
-  background-color: grey;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #f0e68c;
+  background-color: #0b0c10;
 }
-h1 {
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  vertical-align: middle;
-  background-color: rgba(0, 0, 0, 0.726);
+  padding: 20px;
+}
+.App div {
+  color: #f0e68c;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+button {
+  background-color: #50c878;
+  border: 2px solid #d4af37;
+  color: black;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover {
+  background-color: #d4af37;
+  color: black;
+}
+.findDrink {
+  background-color: #d4af37;
+  border: 2px solid #d4af37;
+  color: #0b0c10;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.findDrink:hover {
+  background-color: #1f2833;
+  color: #50c878;
+}
+.card-container {
+  background-color: #0b0c10;
+  color: #f0e68c;
+  border: 1px solid #d4af37;
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+  margin: 10px;
+}
+.card {
+  flex: 1 1 calc(33.33% - 20px);
+  max-width: 400px;
+  border-color: #1f2833;
+  color: #f0e68c;
+  border: 1px solid #d4af37;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  height: 400px;
+  overflow: hidden;
+}
+.header {
+  font-size: 36px;
+  color: #d4af37;
+  margin-bottom: 20px;
 }
 .logo {
-  height: 100px;
-  width: 100px;
+  height: 300px;
+  width: 300px;
 }
-/* div {
-  flex: content;
-  align-content: center;
-} */
+.modal {
+  background-color: #0b0c10;
+
+  opacity: 0.95;
+  height: calc(100vh - 100px);
+  width: 100vw;
+  padding: 50px;
+  overflow-y: auto;
+
+  z-index: 99999;
+}
