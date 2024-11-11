@@ -10,6 +10,11 @@ function UserInput() {
 	const [showCardDisplay, setShowCardDisplay] = useState(false);
 
 	const [randomNumber, setRandomNumber] = useState(0);
+	// This is esentially used as an update signal, since the fetch requests
+	// are in the Card Container, we have to have something to force them
+	// to update, this is very un-React, and was only done because a 
+	// backend person came to the front end and we needed to add a way to
+	// update these components.
 
 	useEffect(() => {
 		setShowCardDisplay(true);
@@ -23,7 +28,7 @@ function UserInput() {
 	}
 
 	function handleFindDrinkClick(drink) {
-		setRandomNumber(Math.random())
+		setRandomNumber(Math.random()) // this forces the child component to update.
 		setShowCardDisplay(true);
 		console.log('handleDrinkSelection :', drink)
 	}

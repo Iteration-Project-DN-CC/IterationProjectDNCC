@@ -14,7 +14,9 @@ recipeController.getRecipesByLiquor = async (req, res, next) => {
     return next({
       log: 'no liquor query param',
       status: 400,
-      message: { err: 'server says: you have to specify a liquor query parameter.' },
+      message: {
+        err: 'server says: you have to specify a liquor query parameter.',
+      },
     });
   }
   if (!limit) {
@@ -26,7 +28,7 @@ recipeController.getRecipesByLiquor = async (req, res, next) => {
   try {
     let data;
     if (liquor === 'any') {
-      data = await models.Recipe.find().limit(limit).exec();
+      data = await models.Recipe.find().limit(limit).exec(); // all, this is not random, would be nice but it is just the first ones in the database
     } else {
       data = await models.Recipe.find({ liquor: liquor }).limit(limit).exec();
     }
@@ -48,13 +50,24 @@ recipeController.getRecipesByLiquor = async (req, res, next) => {
 recipeController.addRecipe = async (req, res, next) => {
   // get params
   console.log('REQ BODY: ', req.body);
-  let { name, liquor, ingredients, recipe, instruction, description, image } = req.body;
+  let { name, liquor, ingredients, recipe, instruction, description, image } =
+    req.body;
 
-  if (!name || !liquor || !ingredients || !recipe || !instruction || !description || !image) {
+  if (
+    !name ||
+    !liquor ||
+    !ingredients ||
+    !recipe ||
+    !instruction ||
+    !description ||
+    !image
+  ) {
     return next({
       log: 'Fields are missing',
       status: 400,
-      message: { err: 'server says: you have to specify a body with the proper fields.' },
+      message: {
+        err: 'server says: you have to specify a body with the proper fields.',
+      },
     });
   }
 
