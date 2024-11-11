@@ -5,6 +5,8 @@ require('dotenv').config();
 const Schema = mongoose.Schema;
 
 const MONGO_URI = process.env.MONGO_URI_KEY;
+// the above is referencing a .env file, you need to add it. because it is purposefully not put on git.
+
 // console.log(MONGO_URI);
 // console.log(process.env.STATUS);
 
