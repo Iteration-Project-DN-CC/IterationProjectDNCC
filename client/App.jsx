@@ -11,7 +11,6 @@ const App = () => {
     <div>
       <div>App!</div>
       <UserInput/>
-
     </div>
   );
 };

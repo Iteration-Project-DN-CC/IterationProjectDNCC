@@ -9,7 +9,7 @@ const CardContainer = (props) => {
     const [liquor, setLiquor] = useState('any'); //initialize liquor = "any"
 
     //state managment for response items: tbd 
-    const [drinks, setDrinsks] = useState([]) //initially drinks is an empty array 
+    const [drinks, setDrinks] = useState([]) //initially drinks is an empty array 
 
     //make a fetch request to the server sending the liquor choice with the body  or sending any 
     useEffect(() => {
