@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const DrinkCard = ({index, drink }) => {
+const DrinkCard = ({index, drink}) => {
 
     //manage state for the info in drink card 
     
@@ -18,7 +18,7 @@ const DrinkCard = ({index, drink }) => {
     return(
         <div>
             <h2>{drink}</h2>
-            <img src="image" alt="" />
+            {/* <img src="image" alt="" /> */}
         </div>
      )
 }
