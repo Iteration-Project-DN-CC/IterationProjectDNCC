@@ -10,7 +10,7 @@ const CardContainer = (props) => {
 
     //state managment for response items: tbd 
     const [drinks, setDrinks] = useState([]) //initially drinks is an empty array 
-    console.log('props passed in: ', props.drinks)
+    console.log('props passed in: ', props.drink)
     console.log('drinks: ', drinks)
     
     
@@ -19,10 +19,10 @@ const CardContainer = (props) => {
         //define aysnc function 
         const fetchData = async () => {
             try {
-                const liquorSelected = props.drinks || 'any';
+                const liquorSelected = props.drink || 'rum';
                 const response = await fetch(`http://localhost:3000/recipe?liquor=${liquorSelected}&limit=3`)
                 if (!response.ok) {
-                    throw new Error ('Reponse not ok, status ${response.status}')
+                    throw new Error (`Reponse not ok, status ${response.status}`)
                 }
                 const result = await response.json();
                 //result will be an object with key recipes that an array 
@@ -62,11 +62,11 @@ const CardContainer = (props) => {
         //         image: "https://images.pexels.com/photos/1194030/pexels-photo-1194030.jpeg?cs=srgb&dl=pexels-mirrographer-1194030.jpg&fm=jpg"
         //         }
         // ]
-        // // const tempDrinks = []; //['white russian, 'old fashion']
-        // // for (let drink of fetchedDrinks){
-        // //     tempDrinks.push(drink.name)
-        // // }
-        // setDrinks(fetchedDrinks)
+        // const tempDrinks = []; //['white russian, 'old fashion']
+        // for (let drink of fetchedDrinks){
+        //     tempDrinks.push(drink.name)
+        // }
+       // setDrinks(fetchedDrinks)
         
         fetchData();
     }, [props.drinks])
@@ -76,6 +76,7 @@ const CardContainer = (props) => {
     return (
         <div>
             {/* need to pass the props to the drink card: name, picture ... */}
+          
             {drinks.map((drink) => (
                 <DrinkCard key= {drink.id} drink={drink} /> 
             ))}

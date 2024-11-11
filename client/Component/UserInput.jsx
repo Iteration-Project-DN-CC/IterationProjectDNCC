@@ -35,8 +35,9 @@ function UserInput() {
 				))}
 				<button onClick={handleFindDrinkClick}>Find My Drink</button>
 			</div>
+			{showCardDisplay && (<CardContainer />)}
 			{/* {showCardDisplay && selectedDrink && (<CardContainer drink={selectedDrink} />) } */}
-			{showCardDisplay && (<CardContainer drinks={selectedDrink}/>)}
+			{showCardDisplay && (<CardContainer drink={selectedDrink}/>)}
 		 </div>
 		)
 }
