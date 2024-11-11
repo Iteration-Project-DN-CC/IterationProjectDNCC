@@ -10,7 +10,7 @@ const App = () => {
   return (
     <div className = "App">
       <div><img src="http://localhost:3000/Images/logo.jpg" className="logo" /></div>
-      <div className = "header"> Welcome to the Cocktail Compass ! </div>
+      <div className = "header"> Welcome to the Cocktail Compass! </div>
       <UserInput/>
     </div>
   );

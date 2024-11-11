@@ -31,7 +31,7 @@ const CardContainer = (props) => {
         //define aysnc function 
         const fetchData = async () => {
             try {
-                const liquorSelected = props.drink || 'rum';
+                const liquorSelected = props.drink || 'any';
                 const response = await fetch(`http://localhost:3000/recipe?liquor=${liquorSelected}&limit=45`)
                 if (!response.ok) {
                     throw new Error (`Reponse not ok, status ${response.status}`)
