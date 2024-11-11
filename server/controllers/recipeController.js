@@ -22,8 +22,15 @@ recipeController.getRecipesByLiquor = async (req, res, next) => {
   }
 
   // Logic to fetch
+
   try {
-    const data = await models.Recipe.find({ liquor: liquor }).limit(limit).exec();
+    let data;
+    if (liquor === 'any') {
+      data = await models.Recipe.find().limit(limit).exec();
+    } else {
+      data = await models.Recipe.find({ liquor: liquor }).limit(limit).exec();
+    }
+
     console.log('Data: ', data);
     // const data = await response.json();
     // console.log(data);
