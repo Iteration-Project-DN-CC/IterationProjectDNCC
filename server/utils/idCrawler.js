@@ -1,5 +1,7 @@
 const models = require('../models/recipeModel.js');
 
+// rate limit is 60 every 10 seconds, just so you know.
+// Gin Tequila Vodka Whiskey Rum
 const apiUrl = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=Tequila';
 
 const liquorList = ['tequila', 'vodka', 'gin', 'rum', 'cognac', 'amaretto', 'vermouth', 'kahlua', 'whiskey'];
@@ -12,7 +14,7 @@ fetch(apiUrl)
     console.log(data);
     let max = data.drinks.length;
     if (max > 48) {
-      max = 4;
+      max = 48; // you could get more, but you would need to thing about rate limit.
     }
     for (let i = 0; i < max; i++) {
       let newApiUrl = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${data.drinks[i].idDrink}`;
