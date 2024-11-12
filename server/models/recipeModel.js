@@ -12,7 +12,7 @@ const MONGO_URI = process.env.MONGO_URI_KEY;
 
 mongoose
   .connect(MONGO_URI, {
-    dbName: 'recipie',
+    dbName: 'recipies',
   })
   .then(() => {
     console.log('Connected to Database.');
@@ -29,6 +29,7 @@ const recipeSchema = new Schema({
   instruction: { type: String, required: true },
   description: { type: String, required: true },
   image: { type: String, required: true },
+  category: {type: String, required: true}
 });
 
 const Recipe = mongoose.model('recipe', recipeSchema);
