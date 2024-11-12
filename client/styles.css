@@ -47,6 +47,12 @@ button:hover {
   border: 2px solid #50c878;
   color: black;
 }
+/* if the button is selected */
+.selected {
+  background-color: #d4af37;
+  border: 2px solid #50c878;
+  color: black;
+}
 /* Seperate button */
 .findDrink {
   background-color: #d4af37;
