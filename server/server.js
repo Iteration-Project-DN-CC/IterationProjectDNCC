@@ -8,7 +8,7 @@ app.use(cors());
 const recipeRouter = require('./routers/recipeRouter.js');
 const ingredientsRouter = require('./routers/ingredientsRouter.js');
 
-app.use('/', express.json());
+app.use(express.json());
 
 // send the bundle file if requested(in production)
 app.get('/dist/bundle.js', (req, res, next) => {
@@ -26,9 +26,9 @@ app.get('/images/logo.jpg', (req, res, next) => {
 app.use('/recipe', recipeRouter);
 
 // hit ingredients router
-app.use('/ingredient', ingredientsRouter);
+app.use('/ingredients', ingredientsRouter);
 
-// serb main page
+// ser main page
 app.get('/', (req, res) => {
 	return res.status(200).sendFile(path.join(__dirname, '../client/index.html'));
 });
