@@ -9,8 +9,6 @@ const recipeRouter = require('./routers/recipeRouter.js');
 
 app.use('/', express.json());
 
-
-        
 // send the bundle file if requested(in production)
 app.get('/dist/bundle.js', (req, res, next) => {
   return res.status(200).sendFile(path.join(__dirname, '../build/bundle.js'));
@@ -33,7 +31,6 @@ app.get('/', (req, res) => {
 app.use('/', (req, res, next) => {
   res.status(404).send(' you got a generic 404, thats an error!');
 });
-
 
 app.use((err, req, res, next) => {
   const defaultError = {
