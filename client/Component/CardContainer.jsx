@@ -34,9 +34,10 @@ const CardContainer = ({ selectedDrink }) => {
 
   return (
     <div className='bg-red-950 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
-      {drinks.map((drink) => (
+      {drinks.map((drink, index) => (
         <DrinkCard
-          key={drink.id}
+          // key={drink.id}
+          key={index}
           drink={drink}
           openModal={() => handleModal(drink)}
         />

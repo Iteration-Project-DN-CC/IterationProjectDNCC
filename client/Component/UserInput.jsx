@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import CardContainer from './CardContainer.jsx';
+import IngredientsContainer from './IngredientsContainer.jsx';
 
 const UserInput = () => {
   const drinks = ['gin', 'vodka', 'whiskey', 'rum', 'tequila'];
@@ -7,6 +8,9 @@ const UserInput = () => {
 
   const handleDrinkSelection = (drink) => setSelectedDrink(drink);
 
+  const handleToggleChange = () => {
+    setIngredientsDisplay((prevState) => !prevState);
+  };
   return (
     <div className='w-full flex flex-col items-center'>
       <div className='bg-red-950 flex gap-4 justify-center my-5'>
