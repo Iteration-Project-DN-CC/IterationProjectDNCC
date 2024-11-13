@@ -1,55 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CardContainer from './CardContainer.jsx';
 
-function UserInput() {
-  // display 5 drinking choices inside 5 buttons
-
+const UserInput = () => {
   const drinks = ['gin', 'vodka', 'whiskey', 'rum', 'tequila'];
-
   const [selectedDrink, setSelectedDrink] = useState(null);
-  const [showCardDisplay, setShowCardDisplay] = useState(false);
 
-  const [randomNumber, setRandomNumber] = useState(0);
-  // This is esentially used as an update signal, since the fetch requests
-  // are in the Card Container, we have to have something to force them
-  // to update, this is very un-React, and was only done because a
-  // backend person came to the front end and we needed to add a way to
-  // update these components.
-
-  useEffect(() => {
-    setShowCardDisplay(true);
-  }, []);
-
-  // button to show the result;
-  function handleDrinkSelection(drink) {
-    setSelectedDrink(drink);
-    //setShowCardDisplay(false);
-    console.log('handleDrinkSelection :', drink);
-  }
-
-  function handleFindDrinkClick(drink) {
-    setRandomNumber(Math.random()); // this forces the child component to update.
-    setShowCardDisplay(true);
-    console.log('handleDrinkSelection :', drink);
-  }
+  const handleDrinkSelection = (drink) => setSelectedDrink(drink);
 
   return (
-    <div>
-      <div className='button-container'>
+    <div className='w-full flex flex-col items-center'>
+      <div className='bg-red-950 flex gap-4 justify-center my-5'>
         {drinks.map((drink) => (
-          <button key={drink} className={`${selectedDrink === drink ? 'selected' : 'notSelected'}`} onClick={() => handleDrinkSelection(drink)}>
+          <button
+            key={drink}
+            className={`px-4 py-2 rounded ${
+              selectedDrink === drink
+                ? 'bg-peach text-white'
+                : 'bg-peach text-white hover:bg-darkerpeach'
+            }`}
+            onClick={() => handleDrinkSelection(drink)}
+          >
             {drink}
           </button>
         ))}
-        <button onClick={handleFindDrinkClick} className='findDrink'>
-          Find My Drink
-        </button>
       </div>
-      {/* {showCardDisplay && (<CardContainer />)} */}
-      {/* {showCardDisplay && selectedDrink && (<CardContainer drink={selectedDrink} />) } */}
-      {showCardDisplay && <CardContainer rnd={randomNumber} drink={selectedDrink} />}
+      {selectedDrink && <CardContainer selectedDrink={selectedDrink} />}
     </div>
   );
-}
+};
 
 export default UserInput;

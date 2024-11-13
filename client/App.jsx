@@ -1,18 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './index.css';
-
-// import UserInput from './Component/UserInput';
+import logo from './cocktailcompass2.png';
 import UserInput from './Component/UserInput.jsx';
 
 const App = () => {
   return (
-    <div className='App'>
-      <div>
-        <img src='http://localhost:3000/Images/logo.jpg' className='logo' />
-      </div>
-      <h1 className='header'>Start Your Cocktail Journey Below</h1>
-      {/* <h2 className = "header2"> Start Your Cocktail Journey Below</h2> */}
-      <UserInput />
+    <div className='bg-red-950 App flex flex-col items-center'>
+      <header className='w-full bg-peach py-4'>
+        <img
+          src={logo}
+          className='w-auto h-40 block ml-4'
+          alt='Cocktail Compass Logo'
+        />
+      </header>
+      <main className='bg-red-950 w-full flex flex-col items-center'>
+        <h1 className='bg-red-950 text-white header text-center text-2xl font-bold mt-4'>
+          Start Your Cocktail Journey Below
+        </h1>
+        <UserInput />
+      </main>
     </div>
   );
 };

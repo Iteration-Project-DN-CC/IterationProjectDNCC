@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-head {
+/* head {
   background-color: #1f2833;
 }
 body {
@@ -12,31 +12,31 @@ body {
   background-color: #0b0c10;
 }
 /* Logo Styling */
-.logo {
+/* .logo {
   height: 300px;
   width: 300px;
-}
+} */
 /* Basic Styling for the App */
-.App {
+/* .App {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   padding: 20px;
-}
-.App div {
+} */
+/* .App div {
   color: #f0e68c;
   font-size: 24px;
   margin-bottom: 20px;
 }
 /* Styling for the Buttons */
-.button-container {
+/* .button-container {
   display: flex;
   gap: 15px;
   justify-content: center;
   margin: 20px 0;
-}
-button {
+} */ 
+/* button {
   background-color: #50c878;
   border: 2px solid #d4af37;
   color: black;
@@ -52,13 +52,13 @@ button:hover {
   color: black;
 }
 /* if the button is selected */
-.selected {
+/* .selected {
   background-color: #d4af37;
   border: 2px solid #50c878;
   color: black;
-}
+} */ 
 /* Seperate button */
-.findDrink {
+/* .findDrink {
   background-color: #d4af37;
   border: 2px solid #d4af37;
   color: #0b0c10;
@@ -66,15 +66,15 @@ button:hover {
   font-size: 16px;
   cursor: pointer;
   transition: 0.3s;
-  border-radius: 25px;
-}
-.findDrink:hover {
+  border-radius: 25px; */
+/* } */
+/* .findDrink:hover {
   background-color: #1f2833;
   color: #50c878;
-}
+} */
 
 /* Styling for the cards and info for the cards */
-.card-container {
+/* .card-container {
   background-color: #0b0c10;
   color: #f0e68c;
   border-radius: 10px;
@@ -84,8 +84,8 @@ button:hover {
   justify-content: center;
   padding: 20px;
   margin: 10px;
-}
-.card {
+} */
+/* .card {
   flex: 1 1 calc(33.33% - 20px);
   max-width: 400px;
   border-color: #1f2833;
@@ -100,16 +100,16 @@ button:hover {
   text-align: center;
   height: 400px;
   overflow: hidden;
-}
-
+} */
+/* 
 .header {
   font-size: 36px;
   color: #d4af37;
   margin-bottom: 20px;
-}
+} */
 
 /* style the modial box that shows more details. */
-.modal {
+/* .modal {
   background-color: #0b0c10;
 
   opacity: 0.95;
@@ -119,4 +119,4 @@ button:hover {
   overflow-y: auto;
 
   z-index: 99999;
-}
+} */

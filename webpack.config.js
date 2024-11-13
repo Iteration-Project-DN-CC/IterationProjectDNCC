@@ -16,7 +16,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.jsx?/,
+        test: /.jsx?/, // Test for JavaScript and JSX files
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -26,9 +26,17 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/i,
+        test: /\.css$/i, // Test for CSS files
         exclude: /node_modules/,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          'style-loader', // Injects styles into the DOM
+          'css-loader', // Resolves CSS imports
+          'postcss-loader', // Processes Tailwind and other PostCSS plugins
+        ],
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)$/i, // Test for image files
+        type: 'asset/resource', // Handle images as assets
       },
     ],
   },
