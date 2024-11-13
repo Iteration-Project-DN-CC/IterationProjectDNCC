@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
 
-const DrinkCard = ({drink, openModal}) => {
-    return(
-        <div className='card'>
-            <h2>{drink.name}</h2>
-            <img src={drink.image} alt="" style={{width: '200px', height: '200px'}} />
-            <button onClick={openModal} >See Recipe</button>
-        </div>
-     )
-}
-export default DrinkCard
+const DrinkCard = ({ drink, openModal }) => {
+  return (
+    <div className='border rounded shadow p-4 text-center'>
+      <h2 className='text-white font-bold text-lg'>{drink.name}</h2>
+      <img
+        src={drink.image}
+        alt={drink.name}
+        className='w-full h-40 object-cover'
+      />
+      <button
+        className='mt-4 px-4 py-2 bg-peach text-white rounded hover:bg-red-400'
+        onClick={openModal}
+      >
+        See Recipe
+      </button>
+    </div>
+  );
+};
+
+export default DrinkCard;

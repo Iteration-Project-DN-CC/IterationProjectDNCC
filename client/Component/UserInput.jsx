@@ -1,86 +1,62 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CardContainer from './CardContainer.jsx';
-import IngredientsContainer from './IngredientsContainer.jsx';
+import IngredientsContainer from './IngredientsContainer.jsx'; // Assuming this is your "Create" blank page component
 
-function UserInput() {
-  // display 5 drinking choices inside 5 buttons
-
+const UserInput = () => {
   const drinks = ['gin', 'vodka', 'whiskey', 'rum', 'tequila'];
-
   const [selectedDrink, setSelectedDrink] = useState(null);
-  const [showCardDisplay, setShowCardDisplay] = useState(false);
-  const [ingredientsDisplay, setIngredientsDisplay] = useState(false);
+  const [ingredientsDisplay, setIngredientsDisplay] = useState(false); // State for toggle
 
-  const [randomNumber, setRandomNumber] = useState(0);
-  // This is esentially used as an update signal, since the fetch requests
-  // are in the Card Container, we have to have something to force them
-  // to update, this is very un-React, and was only done because a
-  // backend person came to the front end and we needed to add a way to
-  // update these components.
-
-  useEffect(() => {
-    setShowCardDisplay(true);
-  }, []);
-
-  // button to show the result;
-  function handleDrinkSelection(drink) {
-    setSelectedDrink(drink);
-    //setShowCardDisplay(false);
-    console.log('handleDrinkSelection :', drink);
-  }
-
-  function handleFindDrinkClick(drink) {
-    setRandomNumber(Math.random()); // this forces the child component to update.
-    setShowCardDisplay(true);
-    console.log('handleDrinkSelection :', drink);
-  }
+  const handleDrinkSelection = (drink) => setSelectedDrink(drink);
 
   const handleToggleChange = () => {
     setIngredientsDisplay((prevState) => !prevState);
   };
+
   return (
-    <div>
-      <div className='button-container'>
-        <span>Explore</span>
-        <label className='switch'>
-          <input type='checkbox' onChange={handleToggleChange}></input>
-          <span className='slider round'></span>
+    <div className='w-full flex flex-col items-center'>
+      {/* Toggle Switch */}
+      <div className='flex items-center gap-4 my-5'>
+        <span className='text-gray-700 font-medium'>Explore</span>
+        <label className='relative inline-flex items-center cursor-pointer'>
+          <input
+            type='checkbox'
+            className='sr-only peer'
+            onChange={handleToggleChange}
+          />
+          <div className='w-11 h-6 bg-gray-200 rounded-full peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 peer-checked:bg-blue-600 transition-colors duration-300'>
+            <div className='w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 peer-checked:translate-x-5'></div>
+          </div>
         </label>
-        <span>Create</span>
+        <span className='text-gray-700 font-medium'>Create</span>
       </div>
 
-      <div className='button-container'>
-        {!ingredientsDisplay && (
-          <>
-            {' '}
-            {drinks.map((drink, index) => (
+      {/* Explore State */}
+      {!ingredientsDisplay && (
+        <>
+          <div className='flex gap-4 justify-center my-5'>
+            {drinks.map((drink) => (
               <button
                 key={drink}
-                className={`${
-                  selectedDrink === drink ? 'selected' : 'notSelected'
+                className={`px-4 py-2 rounded ${
+                  selectedDrink === drink
+                    ? 'bg-peach text-white'
+                    : 'bg-peach text-white hover:bg-darkerpeach'
                 }`}
                 onClick={() => handleDrinkSelection(drink)}
               >
                 {drink}
               </button>
             ))}
-            <button onClick={handleFindDrinkClick} className='findDrink'>
-              Find My Drink
-            </button>
-          </>
-        )}
-        {ingredientsDisplay && (
-        <IngredientsContainer/>
-      )}
-      </div>
-      {/* {showCardDisplay && (<CardContainer />)} */}
-      {/* {showCardDisplay && selectedDrink && (<CardContainer drink={selectedDrink} />) } */}
-      {showCardDisplay && !ingredientsDisplay && (
-        <CardContainer rnd={randomNumber} drink={selectedDrink} />
+          </div>
+          {selectedDrink && <CardContainer selectedDrink={selectedDrink} />}
+        </>
       )}
 
+      {/* Create State */}
+      {ingredientsDisplay && <IngredientsContainer />}
     </div>
   );
-}
+};
 
 export default UserInput;

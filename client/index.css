@@ -1,8 +1,4 @@
-/* Import your existing CSS */
-@import './styles.css';
-
 /* Add Tailwind CSS directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
