@@ -9,7 +9,12 @@ router.get('/', recipeController.getRecipesByLiquor, (req, res) => {
 });
 
 router.post('/', recipeController.addRecipe, (req, res) => {
-  res.status(200).json({ message: 'created recipe entry', created: res.locals.queryResults });
+  res
+    .status(200)
+    .json({
+      message: 'created recipe entry',
+      created: res.locals.queryResults,
+    });
 });
 
 module.exports = router;

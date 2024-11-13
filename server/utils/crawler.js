@@ -3,6 +3,7 @@ const models = require('../models/recipeModel.js');
 const apiUrl = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita';
 
 const liquorList = ['tequila', 'vodka', 'gin', 'rum', 'cognac', 'amaretto', 'vermouth', 'kahlua', 'whiskey'];
+
 fetch(apiUrl)
   .then((response) => {
     return response.json();
@@ -17,7 +18,7 @@ fetch(apiUrl)
     allDrinks;
     console.log('INSERTING>>>>>');
     console.log(allDrinks);
-    models.Recipe.insertMany(allDrinks);
+    // models.Recipe.insertMany(allDrinks);
   });
 
 const parseDataToDatabaseObject = (data) => {

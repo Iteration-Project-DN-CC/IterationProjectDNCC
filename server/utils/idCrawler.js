@@ -2,7 +2,7 @@ const models = require('../models/recipeModel.js');
 
 // rate limit is 60 every 10 seconds, just so you know.
 // Gin Tequila Vodka Whiskey Rum
-const apiUrl = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=Tequila';
+const apiUrl = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=whiskey';
 
 const liquorList = ['tequila', 'vodka', 'gin', 'rum', 'cognac', 'amaretto', 'vermouth', 'kahlua', 'whiskey'];
 fetch(apiUrl)
@@ -10,11 +10,11 @@ fetch(apiUrl)
     return response.json();
   })
   .then((data) => {
-    console.log('GOT THIS DATA');
-    console.log(data);
+    // console.log('GOT THIS DATA');
+    // console.log(data);
     let max = data.drinks.length;
-    if (max > 48) {
-      max = 48; // you could get more, but you would need to thing about rate limit.
+    if (max > 59) {
+      max = 59; // you could get more, but you would need to thing about rate limit.
     }
     for (let i = 0; i < max; i++) {
       let newApiUrl = `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${data.drinks[i].idDrink}`;
@@ -23,7 +23,7 @@ fetch(apiUrl)
           return response.json();
         })
         .then((data) => {
-          console.log(data);
+          // console.log(data);
           let parsed = parseDataToDatabaseObject(data.drinks[0]);
           models.Recipe.create(parsed);
         });
@@ -69,6 +69,7 @@ const parseDataToDatabaseObject = (data) => {
   ret.ingredients = ingredients;
   ret.recipe = amounts;
   ret.instruction = data.strInstructions;
+  ret.category = data.strCategory || undefined;
 
   if (!data.strIBA) {
     if (!data.strCategory || !data.strGlass) {
@@ -85,7 +86,7 @@ const parseDataToDatabaseObject = (data) => {
   }
 
   ret.image = data.strDrinkThumb;
-
+  console.log(ret);
   return ret;
 };
 
