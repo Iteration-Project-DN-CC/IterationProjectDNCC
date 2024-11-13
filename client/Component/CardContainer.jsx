@@ -50,9 +50,10 @@ const CardContainer = (props) => {
   return (
     <div className='card-container'>
       {/* map through the drinks array and create a drink container for each drink */}
-      {drinks.map((drink) => (
+      {drinks.map((drink, index) => (
         <DrinkCard
-          key={drink.id}
+          // key={drink.id}
+          key={index}
           drink={drink}
           openModal={() => {
             setSelectedCardData(drink);

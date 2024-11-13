@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import CardContainer from './CardContainer.jsx';
+import IngredientsContainer from './IngredientsContainer.jsx';
 
 function UserInput() {
   // display 5 drinking choices inside 5 buttons
@@ -8,6 +9,7 @@ function UserInput() {
 
   const [selectedDrink, setSelectedDrink] = useState(null);
   const [showCardDisplay, setShowCardDisplay] = useState(false);
+  const [ingredientsDisplay, setIngredientsDisplay] = useState(false);
 
   const [randomNumber, setRandomNumber] = useState(0);
   // This is esentially used as an update signal, since the fetch requests
@@ -33,21 +35,50 @@ function UserInput() {
     console.log('handleDrinkSelection :', drink);
   }
 
+  const handleToggleChange = () => {
+    setIngredientsDisplay((prevState) => !prevState);
+  };
   return (
     <div>
       <div className='button-container'>
-        {drinks.map((drink) => (
-          <button key={drink} className={`${selectedDrink === drink ? 'selected' : 'notSelected'}`} onClick={() => handleDrinkSelection(drink)}>
-            {drink}
-          </button>
-        ))}
-        <button onClick={handleFindDrinkClick} className='findDrink'>
-          Find My Drink
-        </button>
+        <span>Explore</span>
+        <label className='switch'>
+          <input type='checkbox' onChange={handleToggleChange}></input>
+          <span className='slider round'></span>
+        </label>
+        <span>Create</span>
+      </div>
+
+      <div className='button-container'>
+        {!ingredientsDisplay && (
+          <>
+            {' '}
+            {drinks.map((drink, index) => (
+              <button
+                key={drink}
+                className={`${
+                  selectedDrink === drink ? 'selected' : 'notSelected'
+                }`}
+                onClick={() => handleDrinkSelection(drink)}
+              >
+                {drink}
+              </button>
+            ))}
+            <button onClick={handleFindDrinkClick} className='findDrink'>
+              Find My Drink
+            </button>
+          </>
+        )}
+        {ingredientsDisplay && (
+        <IngredientsContainer/>
+      )}
       </div>
       {/* {showCardDisplay && (<CardContainer />)} */}
       {/* {showCardDisplay && selectedDrink && (<CardContainer drink={selectedDrink} />) } */}
-      {showCardDisplay && <CardContainer rnd={randomNumber} drink={selectedDrink} />}
+      {showCardDisplay && !ingredientsDisplay && (
+        <CardContainer rnd={randomNumber} drink={selectedDrink} />
+      )}
+
     </div>
   );
 }
