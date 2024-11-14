@@ -1,19 +1,30 @@
 import React, { useState } from 'react';
 import CardContainer from './CardContainer.jsx';
 import IngredientsContainer from './IngredientsContainer.jsx';
+import ExploreOptions from './ExploreOptions.jsx';
+
 import logo from '../cocktailcompass.png';
 
 const UserInput = () => {
-  const drinks = ['gin', 'vodka', 'whiskey', 'rum', 'tequila'];
-  const [selectedDrink, setSelectedDrink] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null); // Tracks user selection // julie
+  const [mode, setMode] = useState(null); // Tracks whether "By Liquor" or "By Type"
   const [ingredientsDisplay, setIngredientsDisplay] = useState(false);
 
-  const handleDrinkSelection = (drink) => setSelectedDrink(drink);
-  const handleToggleChange = () =>
+  const handleToggleChange = () => {
     setIngredientsDisplay((prevState) => !prevState);
+    setSelectedOption(null); // Reset selection when toggling modes
+    setMode(null); // Reset mode
+  };
+
+  const handleQuery = (option, queryMode) => {
+    console.log(`Querying for ${queryMode}: ${option}`); // Debug log
+    setSelectedOption(option);
+    setMode(queryMode); // Save the mode ("liquor" or "type")
+  };
 
   return (
     <div id='user-input-container' className='w-full'>
+      {console.log({ selectedOption })}
       {/* Header Section with Logo, Toggle, and Buttons */}
       <header
         id='header'
@@ -31,7 +42,7 @@ const UserInput = () => {
 
           {/* Toggle Switch */}
           <div id='toggle-container' className='flex items-center gap-2'>
-            <span className='text-white font-medium'>Explore</span>
+            <span className='text-white font-medium'>explore</span>
             <label
               id='toggle-switch'
               className='relative inline-flex items-center cursor-pointer'
@@ -50,7 +61,7 @@ const UserInput = () => {
                 className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 peer-checked:left-6'
               ></div>
             </label>
-            <span className='text-white font-medium'>Create</span>
+            <span className='text-white font-medium'>create</span>
           </div>
         </div>
 
@@ -58,22 +69,7 @@ const UserInput = () => {
         <div
           id='drink-buttons-container'
           className='flex gap-4 justify-end mt-4 min-h-[50px]'
-        >
-          {!ingredientsDisplay &&
-            drinks.map((drink) => (
-              <button
-                key={drink}
-                className={`px-4 py-2 rounded ${
-                  selectedDrink === drink
-                    ? 'bg-darkerpeach text-white'
-                    : 'bg-peach text-white hover:bg-darkerpeach active:bg-darkerpeach'
-                }`}
-                onClick={() => handleDrinkSelection(drink)}
-              >
-                {drink}
-              </button>
-            ))}
-        </div>
+        ></div>
       </header>
 
       {/* Main Content */}
@@ -83,11 +79,13 @@ const UserInput = () => {
       >
         {!ingredientsDisplay ? (
           <div id='explore-state'>
-            {selectedDrink && (
+            {/* {selectedOption} */}
+            <div>
+              <ExploreOptions onQuery={handleQuery} />
               <div className='my-5'>
-                <CardContainer selectedDrink={selectedDrink} />
+                <CardContainer selectedDrink={selectedOption} />
               </div>
-            )}
+            </div>
           </div>
         ) : (
           <div id='create-state'>

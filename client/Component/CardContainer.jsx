@@ -10,12 +10,22 @@ const CardContainer = ({ selectedDrink }) => {
   useEffect(() => {
     const fetchDrinks = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/recipe?liquor=${
-            selectedDrink || 'any'
-          }&limit=75`
+        const isLiquor = ['gin', 'vodka', 'whiskey', 'rum', 'tequila'].includes(
+          selectedDrink.toLowerCase()
         );
-        if (!response.ok) throw new Error('Failed to fetch drinks');
+        const endpoint = isLiquor
+          ? `http://localhost:3000/recipe?liquor=${
+              selectedDrink || 'any'
+            }&limit=75`
+          : `http://localhost:3000/recipe/type/${encodeURIComponent(
+              selectedDrink.toLowerCase()
+            )}`;
+
+        console.log(`Fetching from endpoint: ${endpoint}`);
+
+        const response = await fetch(endpoint);
+        if (!response.ok)
+          throw new Error(`Failed to fetch drinks from ${endpoint}`);
 
         const { recipes } = await response.json();
         setDrinks(recipes);
@@ -24,7 +34,9 @@ const CardContainer = ({ selectedDrink }) => {
       }
     };
 
-    fetchDrinks();
+    if (selectedDrink) {
+      fetchDrinks();
+    }
   }, [selectedDrink]);
 
   const handleModal = (drink) => {
@@ -33,10 +45,9 @@ const CardContainer = ({ selectedDrink }) => {
   };
 
   return (
-    <div className='bg-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
+    <div className='bg-peach grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
       {drinks.map((drink, index) => (
         <DrinkCard
-          // key={drink.id}
           key={index}
           drink={drink}
           openModal={() => handleModal(drink)}

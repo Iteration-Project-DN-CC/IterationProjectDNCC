@@ -4,107 +4,85 @@ const componentsController = {};
 
 componentsController.getIngredients = async (req, res, next) => {
 	try {
-		//Query for ingredients
 		const results = await models.Recipe.aggregate([
-			{ $unwind: '$ingredients' }, // Deconstruct ingredients array
-			{
-				$project: {
-					// Normalize the ingredient names to lowercase to eliminate case sensitivity
-					normalizedIngredient: { $toLower: '$ingredients' },
-				},
-			},
+			{ $unwind: '$ingredients' },
+			{ $project: { normalizedIngredient: { $toLower: '$ingredients' } } },
 			{
 				$group: {
-					_id: null, // Grouping everything together
-					allIngredients: { $addToSet: '$normalizedIngredient' }, // Remove duplicates
+					_id: null,
+					allIngredients: { $addToSet: '$normalizedIngredient' },
 				},
 			},
-			{
-				$project: {
-					_id: 0, // Do not include the id field
-					ingredients: { $setUnion: ['$allIngredients', []] }, // Join all result ingredients in one result array
-				},
-			},
+			{ $project: { _id: 0, ingredients: '$allIngredients' } },
 		]);
 
-		const ingredientsArray = results[0].ingredients;
-		// Result is an array of all lowercase ingredients
-		res.locals.ingredientsList = ingredientsArray;
+		res.locals.ingredientsList = results[0]?.ingredients || [];
 		return next();
 	} catch (err) {
+		console.error('Error in getIngredients:', err);
 		return next(res.status(500).json({ error: err.message }));
 	}
 };
 
 componentsController.getLiquor = async (req, res, next) => {
-	console.log('We are in getLiquor middleware');
-	// add logic here to query
 	try {
-		//Query for ingredients
 		const results = await models.Recipe.aggregate([
-			// { $unwind: '$ingredients' }, // Deconstruct ingredients array
-			{
-				$project: {
-					// Normalize the ingredient names to lowercase to eliminate case sensitivity
-					normalizedLiquor: { $toLower: '$liquor' },
-				},
-			},
-			{
-				$group: {
-					_id: null, // Grouping everything together
-					allLiquors: { $addToSet: '$normalizedLiquor' }, // Remove duplicates
-				},
-			},
-			{
-				$project: {
-					_id: 0, // Do not include the id field
-					liquors: { $setUnion: ['$allLiquors', []] }, // Join all result ingredients in one result array
-				},
-			},
+			{ $project: { normalizedLiquor: { $toLower: '$liquor' } } },
+			{ $group: { _id: null, allLiquors: { $addToSet: '$normalizedLiquor' } } },
+			{ $project: { _id: 0, liquors: '$allLiquors' } },
 		]);
 
-		const liquorArray = results[0].liquors;
-		// Result is an array of all lowercase ingredients
-		res.locals.liquorList = liquorArray;
+		res.locals.liquorList = results[0]?.liquors || [];
 		return next();
 	} catch (err) {
+		console.error('Error in getLiquor:', err);
 		return next(res.status(500).json({ error: err.message }));
 	}
 };
 
 componentsController.getCategory = async (req, res, next) => {
-	console.log('We are in getCategory middleware');
-	// add logic here to query
 	try {
-		//Query for ingredients
-		const results = await models.Recipe.aggregate([
-			// { $unwind: '$ingredients' }, // Deconstruct ingredients array
-			{
-				$project: {
-					// Normalize the ingredient names to lowercase to eliminate case sensitivity
-					normalizedCategory: { $toLower: '$category' },
-				},
-			},
-			{
-				$group: {
-					_id: null, // Grouping everything together
-					allCategories: { $addToSet: '$normalizedCategory' }, // Remove duplicates
-				},
-			},
-			{
-				$project: {
-					_id: 0, // Do not include the id field
-					categories: { $setUnion: ['$allCategories', []] }, // Join all result ingredients in one result array
-				},
-			},
-		]);
+		const { type } = req.query;
+		const results = await models.Recipe.find(
+			type ? { category: { $regex: type, $options: 'i' } } : {}
+		);
 
-		const categoriesArray = results[0].categories;
-		// Result is an array of all lowercase ingredients
+		const categoriesArray = [
+			...new Set(results.map((item) => item.category.toLowerCase())),
+		];
 		res.locals.categoriesList = categoriesArray;
 		return next();
 	} catch (err) {
-		return next(res.status(500).json({ error: err.message }));
+		console.error('Error in getCategory:', err);
+		return next({
+			log: 'Error in getCategory',
+			status: 500,
+			message: { err: 'An error occurred while retrieving categories.' },
+		});
+	}
+};
+
+componentsController.getRecipesByType = async (req, res, next) => {
+	try {
+		const { type, limit } = req.query;
+		if (!type) {
+			return next({
+				log: 'No type query param',
+				status: 400,
+				message: { err: 'Type query parameter is required.' },
+			});
+		}
+
+		const data = await models.Recipe.find(query).limit(Number(limit) || 20);
+		res.locals.queryResults = data;
+		return next();
+	} catch (error) {
+		console.error('Error in getRecipesByType:', error);
+		return next({
+			log: 'Error in getRecipesByType',
+			status: 500,
+			message: { err: 'An error occurred while retrieving recipes by type.' },
+		});
 	}
 };
 
