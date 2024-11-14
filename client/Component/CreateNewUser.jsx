@@ -33,23 +33,29 @@ const CreateNewUser = ({ setUser }) => {
   };
 
   return (
-    <div className='create-user-form'>
-      <h2>Create New User</h2>
-      <form onSubmit={handleCreateUser}>
+    <div id='create-user-form'>
+      <h1 className= 'font-semibold text-white'>create new user </h1>
+      <form className= 'flex flex-col stretch' onSubmit={handleCreateUser}>
         <div>
-          <label htmlFor='username'>Username:</label>
+          <label htmlFor='username' className='text-white'>
+            username:
+          </label>
           <input
             type='text'
             id='username'
+            className='block w-full px-4 py-2 text-gray-300 h-10 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-700'
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
           />
         </div>
         <div>
-          <label htmlFor='password'>Password:</label>
+          <label htmlFor='password' className='text-white'>
+            password:
+          </label>
           <input
             type='password'
+            className='block w-full px-4 py-2 text-gray-300 h-10 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-700'
             id='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -57,16 +63,25 @@ const CreateNewUser = ({ setUser }) => {
           />
         </div>
         <div>
-          <label htmlFor='birthday'>Birthday:</label>
+          <label htmlFor='birthday' className='text-white'>
+            birthday:
+          </label>
           <input
             type='date'
             id='birthday'
+            className='block w-full px-4 py-4 my-2 text-gray-300 h-10 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-700'
             value={birthday}
             onChange={(e) => setBirthday(e.target.value)}
           />
         </div>
         {error && <p className='error'>{error}</p>}
-        <button type='submit'>Create account</button>
+        <button
+          id='create account button'
+          className='px-4 py-2 rounded bg-darkerpeach text-white hover:bg-darkerpeach'
+          type='submit'
+        >
+          sign up
+        </button>
       </form>
     </div>
   );

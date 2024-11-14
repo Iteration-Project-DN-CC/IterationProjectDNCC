@@ -31,40 +31,40 @@ const Login = ({ setUser }) => {
 
   return (
     <div className='login-form'>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
+      <h1 className='font-semibold text-white'>existing user</h1>
+      <form className= 'flex flex-col stretch' onSubmit={handleLogin}>
         <div>
-          <label htmlFor='username'>Username:</label>
+          <label htmlFor='username' className='text-white'>
+            username:{' '}
+          </label>
           <input
             type='text'
             id='username'
+            className='block w-full px-4 py-2 text-gray-300 h-10 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-700'
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
           />
         </div>
         <div>
-          <label htmlFor='password'>Password:</label>
+          <label htmlFor='password' className='text-white'>password: </label>
           <input
             type='password'
             id='password'
+            className='block w-full px-4 py-2 text-gray-300 h-10 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-700'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        {/* <div>
-          <label htmlFor='birthday'>Birthday:</label>
-          <input
-            type='date'
-            id='birthday'
-            value={birthday}
-            onChange={(e) => setBirthday(e.target.value)}
-            required
-          />
-        </div> */}
         {error && <p className='error'>{error}</p>}
-        <button type='submit'>Login</button>
+        <button
+          id='login button on the login screen'
+          className='px-4 py-2 my-2 rounded bg-darkerpeach text-white hover:bg-darkerpeach'
+          type='submit'
+        >
+          login
+        </button>
       </form>
     </div>
   );
