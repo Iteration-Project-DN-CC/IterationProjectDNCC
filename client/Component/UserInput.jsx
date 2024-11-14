@@ -5,7 +5,7 @@ import ExploreOptions from './ExploreOptions.jsx';
 
 import logo from '../cocktailcompass.png';
 
-const UserInput = () => {
+const UserInput = ({ username }) => {
   const [selectedOption, setSelectedOption] = useState(null); // Tracks user selection
   const [mode, setMode] = useState(null); // Tracks whether "By Liquor" or "By Type"
   const [ingredientsDisplay, setIngredientsDisplay] = useState(false);
@@ -87,7 +87,7 @@ const UserInput = () => {
           </div>
         ) : (
           <div id='create-state'>
-            <IngredientsContainer />
+            <IngredientsContainer username={username} />
           </div>
         )}
       </main>

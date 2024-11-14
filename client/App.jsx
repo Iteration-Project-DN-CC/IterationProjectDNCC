@@ -39,7 +39,7 @@ const App = () => {
             </div>
           )
         ) : (
-          <UserInput />
+          <UserInput username = {user.username}/>
         )}
       </main>
     </div>
