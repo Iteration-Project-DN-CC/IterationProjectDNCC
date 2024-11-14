@@ -66,7 +66,7 @@ const UserInput = () => {
                 className={`px-4 py-2 rounded ${
                   selectedDrink === drink
                     ? 'bg-darkerpeach text-white'
-                    : 'bg-peach text-white hover:bg-darkerpeach active:bg-darkerpeach  focus:ring focus:ring-red-900'
+                    : 'bg-peach text-white hover:bg-darkerpeach active:bg-darkerpeach'
                 }`}
                 onClick={() => handleDrinkSelection(drink)}
               >
