@@ -5,8 +5,8 @@ import ExploreOptions from './ExploreOptions.jsx';
 
 import logo from '../cocktailcompass.png';
 
-const UserInput = () => {
-  const [selectedOption, setSelectedOption] = useState(null); // Tracks user selection // julie
+const UserInput = ({ username }) => {
+  const [selectedOption, setSelectedOption] = useState(null); // Tracks user selection
   const [mode, setMode] = useState(null); // Tracks whether "By Liquor" or "By Type"
   const [ingredientsDisplay, setIngredientsDisplay] = useState(false);
 
@@ -24,8 +24,7 @@ const UserInput = () => {
 
   return (
     <div id='user-input-container' className='w-full'>
-      {console.log({ selectedOption })}
-      {/* Header Section with Logo, Toggle, and Buttons */}
+      {/* Header Section with Logo and Toggle */}
       <header
         id='header'
         className='w-full bg-peach py-4 px-6 flex flex-col gap-4'
@@ -42,7 +41,7 @@ const UserInput = () => {
 
           {/* Toggle Switch */}
           <div id='toggle-container' className='flex items-center gap-2'>
-            <span className='text-white font-medium'>explore</span>
+            <span className='text-white font-medium'>Explore</span>
             <label
               id='toggle-switch'
               className='relative inline-flex items-center cursor-pointer'
@@ -61,15 +60,16 @@ const UserInput = () => {
                 className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 peer-checked:left-6'
               ></div>
             </label>
-            <span className='text-white font-medium'>create</span>
+            <span className='text-white font-medium'>Create</span>
           </div>
         </div>
 
-        {/* Bottom Row: Drink Buttons */}
-        <div
-          id='drink-buttons-container'
-          className='flex gap-4 justify-end mt-4 min-h-[50px]'
-        ></div>
+        {/* Explore Options */}
+        {!ingredientsDisplay && (
+          <div id='explore-options-container' className='flex gap-4 mt-4'>
+            <ExploreOptions onQuery={handleQuery} />
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
@@ -79,17 +79,15 @@ const UserInput = () => {
       >
         {!ingredientsDisplay ? (
           <div id='explore-state'>
-            {/* {selectedOption} */}
-            <div>
-              <ExploreOptions onQuery={handleQuery} />
+            {selectedOption && (
               <div className='my-5'>
                 <CardContainer selectedDrink={selectedOption} />
               </div>
-            </div>
+            )}
           </div>
         ) : (
           <div id='create-state'>
-            <IngredientsContainer />
+            <IngredientsContainer username={username} />
           </div>
         )}
       </main>

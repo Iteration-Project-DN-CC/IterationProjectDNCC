@@ -6,7 +6,7 @@ const RecipeModal = ({ data, closeModal }) => {
 
   return (
     <Popup open={true} onClose={closeModal} modal nested>
-      <div className='modal bg-white rounded p-6'>
+      <div className='modal bg-background rounded p-6'>
         <img
           src={data.image}
           alt={data.name}
@@ -23,7 +23,7 @@ const RecipeModal = ({ data, closeModal }) => {
           <p>{data.instruction}</p>
         </div>
         <button
-          className='mt-4 px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400'
+          className='mt-4 px-4 py-2 bg-lightpeach text-white rounded hover:bg-peach'
           onClick={closeModal}
         >
           Close

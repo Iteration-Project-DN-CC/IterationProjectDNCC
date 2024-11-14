@@ -65,3 +65,5 @@ const ExploreOptions = ({ onQuery }) => {
 };
 
 export default ExploreOptions;
+
+

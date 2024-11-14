@@ -8,6 +8,7 @@ module.exports = {
         darkerpeach: '#CF695A',
         lightpeach: '#F3A899',
         bggray: '#F7F7F7',
+        background: '#FFF1EF',
       },
       fontFamily: {
         sans: ['Montserrat', 'sans-serif'], // set Monstserrat as default sans font

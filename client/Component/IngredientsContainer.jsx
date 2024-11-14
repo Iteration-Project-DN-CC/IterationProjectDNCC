@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import DrinkCard from './DrinkCard.jsx';
 import RecipeModal from './RecipeModal.jsx';
 
-const IngredientsContainer = () => {
+const IngredientsContainer = ({ username }) => {
   // Fetch request to backend to get all the ingredients upon loading of the page
   useEffect(() => {
     const fetchIngredients = async () => {
@@ -37,13 +37,15 @@ const IngredientsContainer = () => {
   const [selectedCardData, setSelectedCardData] = useState(null);
   // Conditional rendering of recipe info
   const [open, setOpen] = useState(false);
-  // User's saved ingredients state
-  const [savedUserIngredients, setSavedUserIngredients] = useState([]);
+
+ // Open search drop down
+  const handleDropDown = () => {
+    setDropdownVisibility(true);
+  };
 
   const dropdownRef = useRef(null);
 
-  // NOT SURE WHY WE NEED TO USE EFFECT HERE
-  // useEffect(() => {
+  // Close drop down by clicking elsewhere
   const closeDropdownByClickingElsewhere = (e) => {
     // Check if user clicked anywhere but text and dropdown
     if (
@@ -55,14 +57,8 @@ const IngredientsContainer = () => {
     }
   };
   document.addEventListener('click', closeDropdownByClickingElsewhere);
-  // }, []);
 
-  // Open and close drop down
-  const handleDropDown = () => {
-    console.log('drop down should open or close');
-    setDropdownVisibility((previousState) => !previousState);
-  };
-
+ 
   // Update inputValue state as user types in text box
   const handleInput = (e) => {
     setInputValue(e.target.value);
@@ -78,7 +74,6 @@ const IngredientsContainer = () => {
 
   // Fetch function to get filtered recipies from the backend
   const fetchRecipies = async (selectedIngredients) => {
-    console.log('attempting to send data to backend: ', selectedIngredients);
     try {
       const response = await fetch(
         'http://localhost:3000/recipe/findByIngredient',
@@ -91,7 +86,6 @@ const IngredientsContainer = () => {
         }
       );
       const { recipes } = await response.json();
-      // console.log('this is what we got from the backend: ', recipes);
       setDrinks(recipes);
     } catch (error) {
       console.error('Error fetching recipies:', error);
@@ -124,60 +118,65 @@ const IngredientsContainer = () => {
     setOpen(true);
   };
 
-
+  // = Grab user ingredients array from backend, doesn't work right now
+  // const fetchUserIngredients = () => {
+  //   const toSend = {
+  //     username: username,
+  //   };
+  //   console.log('User wants to grab their ingredients from the backend');
+  //   const userIngredientsFromBackend = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         'http://localhost:3000/user/fetchIngredients',
+  //         {
+  //           method: 'POST',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //           },
+  //           /*
   
-
-  // Grab user ingredients array from backend
-  const fetchUserIngredients = () => {
-    console.log('User wants to grab their ingredients from the backend');
-    const userIngredientsFromBackend = async () => {
-      try {
-        const response = await fetch(
-          'http://localhost:3000/ingredients/ingredients'
-        );
-        const { userIngredients } = await response.json();
-        setSavedUserIngredients(userIngredients);
-      } catch (error) {
-        console.error('Error fetching ingredients:', error);
-      }
-    };
-
-  };
+  //           */
+  //           body: JSON.stringify(toSend),
+  //         }
+  //       );
+  //       const { userIngredients } = await response.json();
+  //       console.log('user ingredients ', userIngredients);
+  //       setSavedUserIngredients(userIngredients);
+  //       const newFilteredIngredients = [
+  //         ...new Set(selectedIngredientsArr.concat(userIngredients)),
+  //       ];
+  //       setSelectedIngredientsArr(newFilteredIngredients);
+  //     } catch (error) {
+  //       console.error('Error fetching ingredients:', error);
+  //     }
+  //   };
+  //   userIngredientsFromBackend();
+  //   fetchRecipies(selectedIngredientsArr);
+  // };
 
   // Save current ingredients to user
-  const addIngredientsToUser = () => {
-    console.log('User wants to save ingredients');
+    const addIngredientsToUser = () => {
     const toSend = {
       addIngredients: selectedIngredientsArr,
-      username: username, //ADD PARAMS HERE
+      username: username,
     };
-    const sendIngredientsToUser = async (selectedIngredientsArr) => {
-      console.log(
-        'attempting to send data to backend: ',
-        selectedIngredientsArr
-      );
+    const sendIngredientsToUser = async () => {
       try {
         const response = await fetch(
-          'http://localhost:3000/recipe/findByIngredient',
+          'http://localhost:3000/user/addIngredients',
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            /*
-                const toSend = {
-                addIngredients: selectedIngredientsArr,
-                username: username, //ADD PARAMS HERE
-              };
-            */
             body: JSON.stringify(toSend),
           }
         );
-        console.log('User succesfully saved ingredients to their profile');
       } catch (error) {
-        console.error('Error fetching recipies:', error);
+        console.error('Error adding ingredients:', error);
       }
     };
+    sendIngredientsToUser();
   };
 
   return (
@@ -187,7 +186,7 @@ const IngredientsContainer = () => {
         <div className='relative'>
           <input
             id='search-input'
-            className='block w-full px-4 py-2 text-gray-800 h-10 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
+            className='block w-full px-4 py-2 text-gray-300 h-10 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-700'
             type='text'
             placeholder='Add ingredients'
             autoComplete='off'
@@ -204,7 +203,7 @@ const IngredientsContainer = () => {
               {/* POPULATE ALL THE INGREDIENTS IN DROP DOWN */}
               {filteredIngredientsList.map((ingredient) => (
                 <a
-                  className='block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md'
+                  className='block px-4 py-2 text-gray-800 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md'
                   onClick={() => handleClick(ingredient)}
                   key={ingredient}
                 >
@@ -218,7 +217,7 @@ const IngredientsContainer = () => {
         <span className='mx-5'>
           <button
             className='px-4 py-2 rounded bg-peach text-white hover:bg-darkerpeach'
-            onClick={() => fetchUserIngredients()}
+            // onClick={() => fetchUserIngredients()}
           >
             Fetch my ingredients
           </button>
@@ -231,12 +230,24 @@ const IngredientsContainer = () => {
           </button>
         </span>
       </div>
+
       {/* SELECTED INGREDIENTS, CHANGES EVERYTIME A USER CLICKS ON ANOTHER SELECTION */}
       <div className='flex-wrap space-x-4 space-y-4 justify-center my-5'>
+        {/* {savedUserIngredients.length != 0 &&
+          savedUserIngredients.map((ingredient) => (
+            <button
+              key={ingredient}
+              className={'px-4 py-2 text-red-900 rounded bg-white'}
+              onClick={() => removeIngredient(ingredient)}
+            >
+              {ingredient}
+            </button>
+          ))} */}
+
         {selectedIngredientsArr.map((ingredient) => (
           <button
             key={ingredient}
-            className={'px-4 py-2 rounded bg-white'}
+            className={'px-4 py-2 text-red-900 rounded bg-white'}
             onClick={() => removeIngredient(ingredient)}
           >
             {ingredient}
@@ -246,7 +257,7 @@ const IngredientsContainer = () => {
 
       {/* CONDITIONALLY RENDER DRINK CARDS DEPENDING ON IF USER SELECTED ANYTHING OR NOT */}
       {selectedIngredientsArr.length != 0 && (
-        <div className='bg-red-950 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
+        <div className='bg-background grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
           {drinks.map((drink, index) => (
             <DrinkCard
               key={index}
@@ -267,32 +278,3 @@ const IngredientsContainer = () => {
 };
 
 export default IngredientsContainer;
-
-router.post('/addIngredients', userController.addIngredients, (req, res) => {
-  return res.status(200).json('Successfully saved');
-});
-
-userController.addIngredients = async (req, res, next) => {
-  //access user data from request
-  console.log('This is the current user: ', req.body.username);
-  console.log('This is what they want to add: ', req.body.addIngredients);
-
-  const username = req.body.username;
-  const addIngredients = req.body.addIngredients;
-
-  try {
-    // Find the correct user
-    const foundUser = await models.User.findOne({ username }); //shove user data here
-    console.log('User: ', foundUser);
-    // Replace user ingredients array with whatever was sent from frontend
-    foundUser.ingredients = addIngredients;
-    await foundUser.save();
-    return next();
-  } catch (error) {
-    return next({
-      log: 'Error in userController.getUser: ' + error,
-      status: 500,
-      message: { err: 'Unable to retrieve user from database.' },
-    });
-  }
-};
