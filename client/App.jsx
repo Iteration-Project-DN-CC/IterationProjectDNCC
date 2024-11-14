@@ -8,7 +8,7 @@ const App = () => {
       <main id='main-content' className='w-full flex flex-col items-center'>
         <UserInput />
       </main>
-    </div>
+    // </div>
   );
 };
 
