@@ -42,17 +42,17 @@ const IngredientsContainer = () => {
 
   // NOT SURE WHY WE NEED TO USE EFFECT HERE
   // useEffect(() => {
-    const closeDropdownByClickingElsewhere = (e) => {
-      // Check if user clicked anywhere but text and dropdown
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target) &&
-        !e.target.closest('#search-input')
-      ) {
-        setDropdownVisibility(false);
-      }
-    };
-    document.addEventListener('click', closeDropdownByClickingElsewhere);
+  const closeDropdownByClickingElsewhere = (e) => {
+    // Check if user clicked anywhere but text and dropdown
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(e.target) &&
+      !e.target.closest('#search-input')
+    ) {
+      setDropdownVisibility(false);
+    }
+  };
+  document.addEventListener('click', closeDropdownByClickingElsewhere);
   // }, []);
 
   // Open and close drop down
@@ -127,9 +127,9 @@ const IngredientsContainer = () => {
         <div className='relative'>
           <input
             id='search-input'
-            className='block w-full px-4 py-2 text-gray-800 h-10 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
+            className='block w-full px-4 py-2 text-gray-300 h-10 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-700'
             type='text'
-            placeholder='Search ingredients'
+            placeholder='search ingredients'
             autoComplete='off'
             onClick={handleDropDown}
             onChange={handleInput}
@@ -144,7 +144,7 @@ const IngredientsContainer = () => {
               {/* POPULATE ALL THE INGREDIENTS IN DROP DOWN */}
               {filteredIngredientsList.map((ingredient) => (
                 <a
-                  className='block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md'
+                  className='block px-4 py-2 text-gray-800 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md'
                   onClick={() => handleClick(ingredient)}
                   key={ingredient}
                 >
@@ -160,7 +160,7 @@ const IngredientsContainer = () => {
         {selectedIngredientsArr.map((ingredient) => (
           <button
             key={ingredient}
-            className={'px-4 py-2 rounded bg-white'}
+            className={'px-4 py-2 text-red-900 rounded bg-white'}
             onClick={() => removeIngredient(ingredient)}
           >
             {ingredient}
@@ -170,7 +170,7 @@ const IngredientsContainer = () => {
 
       {/* CONDITIONALLY RENDER DRINK CARDS DEPENDING ON IF USER SELECTED ANYTHING OR NOT */}
       {selectedIngredientsArr.length != 0 && (
-        <div className='bg-red-950 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
+        <div className='bg-background grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
           {drinks.map((drink, index) => (
             <DrinkCard
               key={index}
@@ -191,5 +191,3 @@ const IngredientsContainer = () => {
 };
 
 export default IngredientsContainer;
-
-// when you click away it loses focus
