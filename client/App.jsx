@@ -24,17 +24,33 @@ const App = () => {
         <h1 className='bg-red-950 text-white header text-center text-2xl font-bold mt-4'>
           Start Your Cocktail Journey Below
         </h1>
-        {!user && !loginButton ? (
-          <button onClick={toggleLogin}>Login</button>
+        {!user ? (
+          !loginButton ? (
+            <div>
+              <button onClick={toggleLogin}>Login</button>
+              <CreateNewUser setUser={setUser} />
+            </div>
+          ) : (
+            <div>
+              <button onClick={toggleLogin}>Sign up</button>
+              <Login setUser={setUser} />
+            </div>
+          )
         ) : (
-          <button onClick={toggleLogin}>Sign up</button>
+          <UserInput />
         )}
-        {loginButton && !user && <Login setUser={setUser} />}
-        {!loginButton && !user && <CreateNewUser setUser={setUser} />}
-        {user && <UserInput />}
       </main>
     </div>
   );
 };
 
 export default App;
+
+//     {!user && !loginButton ? (
+//   <button onClick={toggleLogin}>Login</button>
+// ) : (
+//   <button onClick={toggleLogin}>Sign up</button>
+// )}
+// {loginButton && !user && <Login setUser={setUser} />}
+// {!loginButton && !user && <CreateNewUser setUser={setUser} />}
+// {user && <UserInput />}
