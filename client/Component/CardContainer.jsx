@@ -10,11 +10,12 @@ const CardContainer = ({ selectedDrink }) => {
   useEffect(() => {
     const fetchDrinks = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:3000/recipe?liquor=${
-            selectedDrink || 'any'
-          }&limit=45`
-        );
+        const isLiquor = ['gin', 'vodka', 'whiskey', 'rum', 'tequila'].includes(selectedDrink);
+        const endpoint = isLiquor
+          ? `http://localhost:3000/recipe?liquor=${selectedDrink || 'any'}&limit=45`
+          : `http://localhost:3000/recipe/type?type=${selectedDrink}&limit=45`;
+
+        const response = await fetch(endpoint);
         if (!response.ok) throw new Error('Failed to fetch drinks');
 
         const { recipes } = await response.json();
@@ -24,7 +25,9 @@ const CardContainer = ({ selectedDrink }) => {
       }
     };
 
-    fetchDrinks();
+    if (selectedDrink) {
+      fetchDrinks();
+    }
   }, [selectedDrink]);
 
   const handleModal = (drink) => {
@@ -33,10 +36,9 @@ const CardContainer = ({ selectedDrink }) => {
   };
 
   return (
-    <div className='bg-red-950 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
+    <div className="bg-red-950 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5">
       {drinks.map((drink, index) => (
         <DrinkCard
-          // key={drink.id}
           key={index}
           drink={drink}
           openModal={() => handleModal(drink)}

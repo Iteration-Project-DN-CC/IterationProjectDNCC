@@ -2,98 +2,109 @@ const models = require('../models/recipeModel.js');
 
 const recipeController = {};
 
-// Get all recipes
-
-// Get Recipe by liquor name
+// Get Recipes by Liquor
 recipeController.getRecipesByLiquor = async (req, res, next) => {
-  // get params
-  console.log(req.query);
-  let { liquor, limit } = req.query;
-  console.log('Liquor type: ', liquor);
-  if (!liquor) {
-    return next({
-      log: 'no liquor query param',
-      status: 400,
-      message: {
-        err: 'server says: you have to specify a liquor query parameter.',
-      },
-    });
-  }
-  if (!limit) {
-    limit = 20;
-  }
+	try {
+		const { liquor, limit } = req.query;
+		if (!liquor) {
+			return next({
+				log: 'No liquor query param',
+				status: 400,
+				message: { err: 'Liquor query parameter is required.' },
+			});
+		}
 
-  // Logic to fetch
+		const data =
+			liquor === 'any'
+				? await models.Recipe.find().limit(Number(limit) || 20)
+				: await models.Recipe.find({ liquor }).limit(Number(limit) || 20);
 
-  try {
-    let data;
-    if (liquor === 'any') {
-      data = await models.Recipe.find().limit(limit).exec(); // all, this is not random, would be nice but it is just the first ones in the database
-    } else {
-      data = await models.Recipe.find({ liquor: liquor }).limit(limit).exec();
-    }
+		res.locals.queryResults = data;
+		return next();
+	} catch (error) {
+		return next({
+			log: 'Error in recipeController.getRecipesByLiquor: ' + error,
+			status: 500,
+			message: { err: 'An error occurred while retrieving recipes by liquor.' },
+		});
+	}
+};
 
-    console.log('Data: ', data);
-    // const data = await response.json();
-    // console.log(data);
-    res.locals.queryResults = data;
-    return next();
-  } catch (error) {
-    return next({
-      log: 'Error in recipeController.getAllRecipes' + error,
-      status: 500,
-      message: { err: 'An error occurred while retrieving recipies.' },
-    });
-  }
+// Get Recipes by Type
+recipeController.getRecipesByType = async (req, res, next) => {
+	try {
+		const { type, limit } = req.query;
+		if (!type) {
+			return next({
+				log: 'No type query param',
+				status: 400,
+				message: { err: 'Type query parameter is required.' },
+			});
+		}
+
+		const data = await models.Recipe.find({
+			category: { $regex: type, $options: 'i' },
+		}).limit(Number(limit) || 20);
+
+		res.locals.queryResults = data;
+		return next();
+	} catch (error) {
+		return next({
+			log: 'Error in recipeController.getRecipesByType: ' + error,
+			status: 500,
+			message: { err: 'An error occurred while retrieving recipes by type.' },
+		});
+	}
 };
 
 recipeController.addRecipe = async (req, res, next) => {
-  // get params
-  console.log('REQ BODY: ', req.body);
-  let { name, liquor, ingredients, recipe, instruction, description, image } =
-    req.body;
+	try {
+		const {
+			name,
+			liquor,
+			ingredients,
+			recipe,
+			instruction,
+			description,
+			image,
+		} = req.body;
 
-  if (
-    !name ||
-    !liquor ||
-    !ingredients ||
-    !recipe ||
-    !instruction ||
-    !description ||
-    !image
-  ) {
-    return next({
-      log: 'Fields are missing',
-      status: 400,
-      message: {
-        err: 'server says: you have to specify a body with the proper fields.',
-      },
-    });
-  }
+		if (
+			!name ||
+			!liquor ||
+			!ingredients ||
+			!recipe ||
+			!instruction ||
+			!description ||
+			!image
+		) {
+			return next({
+				log: 'Missing fields in request body',
+				status: 400,
+				message: { err: 'All fields are required.' },
+			});
+		}
 
-  const dbFields = {
-    name, // name:name
-    liquor,
-    ingredients,
-    recipe,
-    instruction,
-    description,
-    image,
-  };
+		const newRecipe = {
+			name,
+			liquor,
+			ingredients,
+			recipe,
+			instruction,
+			description,
+			image,
+		};
+		const data = await models.Recipe.create(newRecipe);
 
-  // Logic to fetch
-  try {
-    const data = await models.Recipe.create(dbFields);
-    console.log('Data: ', data);
-    res.locals.queryResults = data;
-    return next();
-  } catch (error) {
-    return next({
-      log: 'Error in recipeController.addRecipe: ' + error,
-      status: 500,
-      message: { err: 'An error occurred while adding a recipe.' },
-    });
-  }
+		res.locals.queryResults = data;
+		return next();
+	} catch (error) {
+		return next({
+			log: 'Error in recipeController.addRecipe: ' + error,
+			status: 500,
+			message: { err: 'An error occurred while adding a recipe.' },
+		});
+	}
 };
 
 module.exports = recipeController;
