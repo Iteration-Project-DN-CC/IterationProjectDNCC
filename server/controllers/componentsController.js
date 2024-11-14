@@ -73,24 +73,6 @@ componentsController.getRecipesByType = async (req, res, next) => {
 			});
 		}
 
-		let query;
-		switch (type.toLowerCase()) {
-			case 'sour':
-				query = {
-					ingredients: { $in: ['lime juice', 'lemon juice', 'orange juice'] },
-				};
-				break;
-			case 'tropical':
-				query = { ingredients: { $in: ['pineapple'] } };
-				break;
-			default:
-				return next({
-					log: 'Invalid type query param',
-					status: 400,
-					message: { err: 'Invalid type query parameter.' },
-				});
-		}
-
 		const data = await models.Recipe.find(query).limit(Number(limit) || 20);
 		res.locals.queryResults = data;
 		return next();

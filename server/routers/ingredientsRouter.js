@@ -16,6 +16,7 @@ router.get('/liquors', componentsController.getLiquor, (req, res) => {
 	return res.status(200).json(res.locals.liquorList);
 });
 
+//The /type route is more suitable for cases where type is optional or when you want to support additional query parameters.
 router.get('/type', componentsController.getRecipesByType, (req, res) => {
 	res.status(200).json({ recipes: res.locals.queryResults });
 });

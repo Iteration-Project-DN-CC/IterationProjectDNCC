@@ -15,6 +15,7 @@ router.post('/', recipeController.addRecipe, (req, res) => {
 });
 
 // Route to handle fetching recipes by type
+// The /type/:type route is ideal for cases where the cocktail type is a required piece of information, and it keeps the URL structure clean and RESTful.
 router.get('/type/:type', recipeController.getRecipesByType, (req, res) => {
 	res.status(200).json({ recipes: res.locals.queryResults });
 });

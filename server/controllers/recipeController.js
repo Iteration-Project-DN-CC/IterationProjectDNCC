@@ -93,24 +93,58 @@ recipeController.getRecipesByType = async (req, res, next) => {
 		}
 
 		let query;
-		switch (type.toLowerCase()) {
+		switch (type) {
 			case 'sour':
-				query = { ingredients: { $in: ['lime juice', 'lemon juice'] } };
+				query = {
+					$or: [
+						{ ingredients: { $regex: '\\blime juice\\b', $options: 'i' } },
+						{ ingredients: { $regex: '\\blemon juice\\b', $options: 'i' } },
+					],
+				};
 				break;
-			case 'highball':
-				query = { ingredients: { $in: ['soda', 'club soda'] } };
+			case 'highball': 
+				query = {
+					$or: [
+						{ ingredients: { $regex: '\\bsoda\\b', $options: 'i' } },
+						{ ingredients: { $regex: '\\bclub soda\\b', $options: 'i' } },
+					],
+				};
 				break;
 			case 'spirit forward':
 				query = { ingredients: { $size: 2 } };
 				break;
 			case 'fizz':
-				query = { ingredients: { $in: ['soda', 'champagne'] } };
+				query = {
+					$and: [
+						{
+							$or: [
+								{ ingredients: { $regex: '\\blime\\b', $options: 'i' } },
+								{ ingredients: { $regex: '\\blemon\\b', $options: 'i' } },
+								{
+									ingredients: { $regex: '\\borange juice\\b', $options: 'i' },
+								},
+								{
+									ingredients: {
+										$regex: '\\bgrapefruit juice\\b',
+										$options: 'i',
+									},
+								},
+							],
+						},
+						{
+							$or: [
+								{ ingredients: { $regex: '\\bsoda\\b', $options: 'i' } },
+								{ ingredients: { $regex: '\\bchampagne\\b', $options: 'i' } },
+							],
+						},
+					],
+				};
 				break;
 			case 'martini':
 				query = { name: { $regex: '\\bmartini\\b', $options: 'i' } };
 				break;
 			case 'tropical':
-				query = { ingredients: { $in: ['pineapple'] } };
+				query = { ingredients: { $regex: '\\bpineapple\\b', $options: 'i' } };
 				break;
 			default:
 				return next({
