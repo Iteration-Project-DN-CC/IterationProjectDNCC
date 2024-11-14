@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const CreateNewUser = ({ onUserCreated }) => {
+const CreateNewUser = ({ setUser }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [birthday, setBirthday] = useState('');

@@ -5,7 +5,7 @@ const userController = require('../controllers/userController.js');
 
 //get an existing user // /:username/:password
 // `http://localhost:8080/user?username=${username}&password=${password}`
-router.get('/:username/:password', userController.getUser, (req, res) => {
+router.get('/', userController.getUser, (req, res) => {
   return res.status(200).json(res.locals.foundUser);
 });
 

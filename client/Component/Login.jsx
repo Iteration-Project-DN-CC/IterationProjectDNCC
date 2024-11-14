@@ -9,7 +9,7 @@ const Login = ({ setUser }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
-    alert(`${username} ${password} ${birthday}`);
+    // alert(`${username} ${password}`);
 
     try {
       const response = await fetch(
@@ -17,6 +17,7 @@ const Login = ({ setUser }) => {
       );
 
       const data = await response.json();
+      console.log(data)
 
       if (response.ok) {
         setUser(data);

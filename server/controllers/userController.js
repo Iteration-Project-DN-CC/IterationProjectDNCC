@@ -4,7 +4,7 @@ const userController = {};
 
 userController.getUser = async (req, res, next) => {
   //access user data from request
-  if (!req.params.username || !req.params.password) {
+  if (!req.query.username || !req.query.password) {
     return next({
       log: 'Did not receive username and password parameters in getUser request',
       status: 401,
@@ -12,8 +12,8 @@ userController.getUser = async (req, res, next) => {
     });
   }
 
-  const username = req.params.username;
-  const password = req.params.password;
+  const username = req.query.username;
+  const password = req.query.password;
 
   try {
     const data = await models.User.findOne({ username }); //shove user data here
