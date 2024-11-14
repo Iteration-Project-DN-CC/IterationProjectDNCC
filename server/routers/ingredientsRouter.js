@@ -5,7 +5,7 @@ const router = express.Router();
 //const mongoose = require('mongoose');
 
 router.get('/ingredients', componentsController.getIngredients, (req, res) => {
-	return res.status(200).json(res.locals.ingredientsList);
+	return res.status(200).json({ fetchedIngredients: res.locals.ingredientsList });
 });
 
 router.get('/categories', componentsController.getCategory, (req, res) => {

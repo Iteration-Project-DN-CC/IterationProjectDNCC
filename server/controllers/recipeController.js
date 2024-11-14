@@ -167,4 +167,45 @@ recipeController.getRecipesByType = async (req, res, next) => {
 	}
 };
 
+recipeController.getRecipesByIngredients = async (req, res, next) => {
+  console.log('here is what we got from front end: ', req.body);
+  const ingredientsArr = req.body;
+  // Logic to fetch
+
+  try {
+    let data;
+    if (ingredientsArr.length === 0) {
+      data = await models.Recipe.find(); // if no ingredients are put in then return everything
+    } else {
+      // THIS IS FOR PARTIAL MATCHES
+      data = await models.Recipe.find({
+        ingredients: {
+          $elemMatch: {
+            $in: ingredientsArr.map((ingredient) => RegExp(ingredient, 'i')), // needs to be case insensitive!
+          },
+        },
+      });
+      // THIS IS FOR ALL MATCHES
+      // const data = await models.Recipe.find({
+      //   ingredients: {
+      //     $all: ingredientsArr.map((ingredient) => new RegExp(ingredient, 'i')), // case-insensitive regex for each ingredient
+      //   },
+      // });
+      console.log('Data: ', data);
+      // const data = await response.json();
+      // console.log(data);
+      res.locals.queryResults = data;
+      return next();
+    }
+  } catch (error) {
+    return next({
+      log: 'Error in recipeController.getAllRecipes' + error,
+      status: 500,
+      message: { err: 'An error occurred while retrieving recipies.' },
+    });
+  }
+};
+
 module.exports = recipeController;
+
+
