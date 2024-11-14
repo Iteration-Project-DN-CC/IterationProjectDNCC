@@ -17,4 +17,13 @@ router.post('/', recipeController.addRecipe, (req, res) => {
 		});
 });
 
+// NEWLY ADDED ROUTER TO HANDLE QUERYING BY RECIPE
+router.post(
+  '/findByIngredient',
+  recipeController.getRecipesByIngredients,
+  (req, res) => {
+    return res.status(200).json({ recipes: res.locals.queryResults });
+  }
+);
+
 module.exports = router;
