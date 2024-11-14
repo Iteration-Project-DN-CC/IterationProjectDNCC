@@ -37,22 +37,24 @@ const IngredientsContainer = () => {
   const [selectedCardData, setSelectedCardData] = useState(null);
   // Conditional rendering of recipe info
   const [open, setOpen] = useState(false);
+  // User's saved ingredients state
+  const [savedUserIngredients, setSavedUserIngredients] = useState([]);
 
   const dropdownRef = useRef(null);
 
   // NOT SURE WHY WE NEED TO USE EFFECT HERE
   // useEffect(() => {
-    const closeDropdownByClickingElsewhere = (e) => {
-      // Check if user clicked anywhere but text and dropdown
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target) &&
-        !e.target.closest('#search-input')
-      ) {
-        setDropdownVisibility(false);
-      }
-    };
-    document.addEventListener('click', closeDropdownByClickingElsewhere);
+  const closeDropdownByClickingElsewhere = (e) => {
+    // Check if user clicked anywhere but text and dropdown
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(e.target) &&
+      !e.target.closest('#search-input')
+    ) {
+      setDropdownVisibility(false);
+    }
+  };
+  document.addEventListener('click', closeDropdownByClickingElsewhere);
   // }, []);
 
   // Open and close drop down
@@ -89,7 +91,7 @@ const IngredientsContainer = () => {
         }
       );
       const { recipes } = await response.json();
-      console.log('this is what we got from the backend: ', recipes);
+      // console.log('this is what we got from the backend: ', recipes);
       setDrinks(recipes);
     } catch (error) {
       console.error('Error fetching recipies:', error);
@@ -116,20 +118,78 @@ const IngredientsContainer = () => {
     fetchRecipies(ingredientStateHold);
   };
 
+  // Open recipe view
   const handleModal = (drink) => {
     setSelectedCardData(drink);
     setOpen(true);
   };
 
+
+  
+
+  // Grab user ingredients array from backend
+  const fetchUserIngredients = () => {
+    console.log('User wants to grab their ingredients from the backend');
+    const userIngredientsFromBackend = async () => {
+      try {
+        const response = await fetch(
+          'http://localhost:3000/ingredients/ingredients'
+        );
+        const { userIngredients } = await response.json();
+        setSavedUserIngredients(userIngredients);
+      } catch (error) {
+        console.error('Error fetching ingredients:', error);
+      }
+    };
+
+  };
+
+  // Save current ingredients to user
+  const addIngredientsToUser = () => {
+    console.log('User wants to save ingredients');
+    const toSend = {
+      addIngredients: selectedIngredientsArr,
+      username: username, //ADD PARAMS HERE
+    };
+    const sendIngredientsToUser = async (selectedIngredientsArr) => {
+      console.log(
+        'attempting to send data to backend: ',
+        selectedIngredientsArr
+      );
+      try {
+        const response = await fetch(
+          'http://localhost:3000/recipe/findByIngredient',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            /*
+                const toSend = {
+                addIngredients: selectedIngredientsArr,
+                username: username, //ADD PARAMS HERE
+              };
+            */
+            body: JSON.stringify(toSend),
+          }
+        );
+        console.log('User succesfully saved ingredients to their profile');
+      } catch (error) {
+        console.error('Error fetching recipies:', error);
+      }
+    };
+  };
+
   return (
     <div>
       <div className='flex items-center justify-center my-5'>
+        {/* DROP DOWN MENU + SEARCH */}
         <div className='relative'>
           <input
             id='search-input'
             className='block w-full px-4 py-2 text-gray-800 h-10 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500'
             type='text'
-            placeholder='Search ingredients'
+            placeholder='Add ingredients'
             autoComplete='off'
             onClick={handleDropDown}
             onChange={handleInput}
@@ -154,6 +214,22 @@ const IngredientsContainer = () => {
             </div>
           )}
         </div>
+        {/* ADD USER INGREDIENTS FROM BACKEND */}
+        <span className='mx-5'>
+          <button
+            className='px-4 py-2 rounded bg-peach text-white hover:bg-darkerpeach'
+            onClick={() => fetchUserIngredients()}
+          >
+            Fetch my ingredients
+          </button>
+          {/* SAVE CURRENT INGREDIENTS LIST */}
+          <button
+            className='px-4 py-2 rounded bg-peach text-white hover:bg-darkerpeach'
+            onClick={() => addIngredientsToUser()}
+          >
+            Save my ingredients
+          </button>
+        </span>
       </div>
       {/* SELECTED INGREDIENTS, CHANGES EVERYTIME A USER CLICKS ON ANOTHER SELECTION */}
       <div className='flex-wrap space-x-4 space-y-4 justify-center my-5'>
@@ -192,4 +268,31 @@ const IngredientsContainer = () => {
 
 export default IngredientsContainer;
 
-// when you click away it loses focus
+router.post('/addIngredients', userController.addIngredients, (req, res) => {
+  return res.status(200).json('Successfully saved');
+});
+
+userController.addIngredients = async (req, res, next) => {
+  //access user data from request
+  console.log('This is the current user: ', req.body.username);
+  console.log('This is what they want to add: ', req.body.addIngredients);
+
+  const username = req.body.username;
+  const addIngredients = req.body.addIngredients;
+
+  try {
+    // Find the correct user
+    const foundUser = await models.User.findOne({ username }); //shove user data here
+    console.log('User: ', foundUser);
+    // Replace user ingredients array with whatever was sent from frontend
+    foundUser.ingredients = addIngredients;
+    await foundUser.save();
+    return next();
+  } catch (error) {
+    return next({
+      log: 'Error in userController.getUser: ' + error,
+      status: 500,
+      message: { err: 'Unable to retrieve user from database.' },
+    });
+  }
+};
