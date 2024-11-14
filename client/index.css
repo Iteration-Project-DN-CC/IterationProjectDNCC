@@ -1,7 +1,10 @@
-/* Import your existing CSS */
-@import './styles.css';
+/* import Montserrat font */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 
 /* Add Tailwind CSS directives */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Dancing+Script:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

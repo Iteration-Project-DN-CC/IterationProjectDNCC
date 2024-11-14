@@ -1,86 +1,98 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CardContainer from './CardContainer.jsx';
 import IngredientsContainer from './IngredientsContainer.jsx';
+import ExploreOptions from './ExploreOptions.jsx';
 
-function UserInput() {
-  // display 5 drinking choices inside 5 buttons
+import logo from '../cocktailcompass.png';
 
-  const drinks = ['gin', 'vodka', 'whiskey', 'rum', 'tequila'];
-
-  const [selectedDrink, setSelectedDrink] = useState(null);
-  const [showCardDisplay, setShowCardDisplay] = useState(false);
+const UserInput = ({ username }) => {
+  const [selectedOption, setSelectedOption] = useState(null); // Tracks user selection
+  const [mode, setMode] = useState(null); // Tracks whether "By Liquor" or "By Type"
   const [ingredientsDisplay, setIngredientsDisplay] = useState(false);
-
-  const [randomNumber, setRandomNumber] = useState(0);
-  // This is esentially used as an update signal, since the fetch requests
-  // are in the Card Container, we have to have something to force them
-  // to update, this is very un-React, and was only done because a
-  // backend person came to the front end and we needed to add a way to
-  // update these components.
-
-  useEffect(() => {
-    setShowCardDisplay(true);
-  }, []);
-
-  // button to show the result;
-  function handleDrinkSelection(drink) {
-    setSelectedDrink(drink);
-    //setShowCardDisplay(false);
-    console.log('handleDrinkSelection :', drink);
-  }
-
-  function handleFindDrinkClick(drink) {
-    setRandomNumber(Math.random()); // this forces the child component to update.
-    setShowCardDisplay(true);
-    console.log('handleDrinkSelection :', drink);
-  }
 
   const handleToggleChange = () => {
     setIngredientsDisplay((prevState) => !prevState);
+    setSelectedOption(null); // Reset selection when toggling modes
+    setMode(null); // Reset mode
   };
+
+  const handleQuery = (option, queryMode) => {
+    console.log(`Querying for ${queryMode}: ${option}`); // Debug log
+    setSelectedOption(option);
+    setMode(queryMode); // Save the mode ("liquor" or "type")
+  };
+
   return (
-    <div>
-      <div className='button-container'>
-        <span>Explore</span>
-        <label className='switch'>
-          <input type='checkbox' onChange={handleToggleChange}></input>
-          <span className='slider round'></span>
-        </label>
-        <span>Create</span>
-      </div>
+    <div id='user-input-container' className='w-full'>
+      {/* Header Section with Logo and Toggle */}
+      <header
+        id='header'
+        className='w-full bg-peach py-4 px-6 flex flex-col gap-4'
+      >
+        {/* Top Row: Logo and Toggle */}
+        <div className='flex items-center justify-between'>
+          {/* Logo */}
+          <img
+            id='logo'
+            src={logo}
+            alt='Cocktail Compass Logo'
+            className='h-52 w-auto'
+          />
 
-      <div className='button-container'>
+          {/* Toggle Switch */}
+          <div id='toggle-container' className='flex items-center gap-2'>
+            <span className='text-white font-medium'>Explore</span>
+            <label
+              id='toggle-switch'
+              className='relative inline-flex items-center cursor-pointer'
+            >
+              <input
+                type='checkbox'
+                className='sr-only peer'
+                onChange={handleToggleChange}
+              />
+              <div
+                id='toggle-oval'
+                className='w-12 h-6 bg-red-100 rounded-full relative'
+              ></div>
+              <div
+                id='toggle-circle'
+                className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 peer-checked:left-6'
+              ></div>
+            </label>
+            <span className='text-white font-medium'>Create</span>
+          </div>
+        </div>
+
+        {/* Explore Options */}
         {!ingredientsDisplay && (
-          <>
-            {' '}
-            {drinks.map((drink, index) => (
-              <button
-                key={drink}
-                className={`${
-                  selectedDrink === drink ? 'selected' : 'notSelected'
-                }`}
-                onClick={() => handleDrinkSelection(drink)}
-              >
-                {drink}
-              </button>
-            ))}
-            <button onClick={handleFindDrinkClick} className='findDrink'>
-              Find My Drink
-            </button>
-          </>
+          <div id='explore-options-container' className='flex gap-4 mt-4'>
+            <ExploreOptions onQuery={handleQuery} />
+          </div>
         )}
-        {ingredientsDisplay && (
-        <IngredientsContainer/>
-      )}
-      </div>
-      {/* {showCardDisplay && (<CardContainer />)} */}
-      {/* {showCardDisplay && selectedDrink && (<CardContainer drink={selectedDrink} />) } */}
-      {showCardDisplay && !ingredientsDisplay && (
-        <CardContainer rnd={randomNumber} drink={selectedDrink} />
-      )}
+      </header>
 
+      {/* Main Content */}
+      <main
+        id='main-content'
+        className='w-full flex flex-col items-center py-6'
+      >
+        {!ingredientsDisplay ? (
+          <div id='explore-state'>
+            {selectedOption && (
+              <div className='my-5'>
+                <CardContainer selectedDrink={selectedOption} />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div id='create-state'>
+            <IngredientsContainer username={username} />
+          </div>
+        )}
+      </main>
     </div>
   );
-}
+};
 
 export default UserInput;

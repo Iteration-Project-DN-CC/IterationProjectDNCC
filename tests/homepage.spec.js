@@ -1,81 +1,111 @@
 const { test, expect } = require('@playwright/test');
+const url = 'http://localhost:8080';
 
 test.describe('Home Page Tests', () => {
-  const url = 'http://localhost:3000';
+  test.beforeEach(async ({ page }) => {
+    await page.goto(url);
+  });
 
   test('should load the homepage', async ({ page }) => {
-    await page.goto(url);
     await expect(page).toHaveURL(url);
   });
 
   test('has title', async ({ page }) => {
-    await page.goto(url);
-
     await expect(page).toHaveTitle(/The Cocktail Compass/);
   });
 
-  xtest('should display the main header', async ({ page }) => {
-    // await page.waitForSelector('h1.header', { timeout: 10000 }); // Increase the timeout if necessary
-    // await expect(header).toContainText('Start Your Cocktail Journey Below');
-    await page.goto(url);
+  test('should display the main header', async ({ page }) => {
+    await page.waitForSelector('h1.header', { timeout: 10000 }); // Increase the timeout if necessary
     const header = page.locator('h1.header');
-    //await expect(header).toHaveText(/Start Your Cocktail Journey Below/);
     await expect(header).toContainText('Start Your Cocktail Journey Below');
-  });
-
-  xtest('should change content to gin after selecting gin and pressing Find My Drink', async ({
-    page,
-  }) => {
-    await page.goto(url);
-
-    // Locate the buttons
-
-    const firstButton = page.locator('button:has-text("gin")');
-    const secondButton = page.locator('button:has-text("Find My Drink")');
-    const thirdButton = page.locator('button:has-text("See Recipe)');
-
-    await firstButton.click();
-
-    await secondButton.click();
-
-    await thirdButton.click();
-
-    // Verify the content change
-    const content = page.locator('.card-container');
-    await expect(content).toHaveText('Gin');
   });
 });
 
-// test.describe('Home Page Tests', () => {
-//   // Replace with your actual homepage URL
-//   const url = 'https://example.com';
+test.describe('Gin Drink Selection Workflow', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(url);
+  });
 
-//   test('should load the homepage', async ({ page }) => {
-//     await page.goto(url);
-//     await expect(page).toHaveURL(url);
-//   });
+  test('Click "gin" and verify results appear', async ({ page }) => {
+    // Click the "gin" button first
+    const firstButton = page.locator('button:has-text("gin")');
+    await firstButton.click();
 
-//   test('should have the correct title', async ({ page }) => {
-//     await page.goto(url);
-//     await expect(page).toHaveTitle(/Example Domain/); // Replace with your expected title
-//   });
+    // Wait for the card container to load and verify it contains the expected text
+    const container = page.locator('#card-container');
+    await container.waitFor({ timeout: 10000 });
+    const firstCard = container.locator('div').first();
+    await firstCard.waitFor({ timeout: 10000 });
+    await expect(firstCard).toContainText('Cherry Electric Lemonade');
+  });
 
-//   test('should display the main header', async ({ page }) => {
-//     await page.goto(url);
-//     const header = page.locator('h1'); // Adjust selector if necessary
-//     await expect(header).toHaveText('Example Domain'); // Replace with expected text
-//   });
+  test('Click "See Recipe"', async ({ page }) => {
+    // Click the "gin" button first
+    const firstButton = page.locator('button:has-text("gin")');
+    await firstButton.click();
 
-//   test('should navigate to the correct link', async ({ page }) => {
-//     await page.goto(url);
-//     const link = page.locator('a'); // Adjust selector if necessary
-//     await link.click();
-//     await expect(page).toHaveURL(/.*example.com\/subpage/); // Replace with the expected destination
-//   });
+    // Wait for the card container to load and verify it contains the expected text
+    const container = page.locator('#card-container');
+    await container.waitFor({ timeout: 10000 });
 
-//   test('should have a specific element visible', async ({ page }) => {
-//     await page.goto(url);
-//     const element = page.locator('#important-element'); // Adjust selector for your needs
-//     await expect(element).toBeVisible();
-//   });
-// });
+    const firstCard = container.locator('div').first();
+    await firstCard.waitFor({ timeout: 10000 });
+
+    const secondButton = firstCard.locator('button:has-text("See Recipe")');
+    await secondButton.waitFor({ timeout: 10000 });
+    await secondButton.click();
+
+    const modal = page.locator('.popup-overlay');
+    await modal.waitFor({ timeout: 10000 });
+    await expect(modal).toContainText('Cherry Electric Lemonade');
+  });
+
+  async function waitForAndClick(locator) {
+    await locator.waitFor({ timeout: 10000 });
+    await locator.click();
+  }
+
+  test('Close modal and verify popup root is empty', async ({ page }) => {
+    // Click the "gin" button
+    const ginButton = page.locator('button:has-text("gin")');
+    await waitForAndClick(ginButton);
+
+    // Wait for the card container to load and find the first card
+    const container = page.locator('#card-container');
+    await container.waitFor({ timeout: 10000 });
+    const firstCard = container.locator('div').first();
+
+    // Click the "See Recipe" button in the first card
+    const seeRecipeButton = firstCard.locator('button:has-text("See Recipe")');
+    await waitForAndClick(seeRecipeButton);
+
+    // Wait for modal to appear and click the close button
+    const modal = page.locator('.popup-overlay');
+    const closeButton = modal.locator('button:has-text("close")');
+    await waitForAndClick(closeButton);
+
+    // Verify that the popup root is empty (no child elements)
+    const popupRoot = page.locator('#popup-root');
+    const isPopupRootEmpty = await popupRoot.evaluate(
+      (el) => el.childElementCount === 0
+    );
+    expect(isPopupRootEmpty).toBe(true);
+  });
+
+  test('Click toggle should show Ingredients Form', async ({ page }) => {
+    // Click the toggle switch
+    const toggle = page.locator('#toggle');
+    await waitForAndClick(toggle);
+
+    // Verify the ingredients container has at least one child element
+    const ingredientsContainer = page.locator('#ingredients');
+    await ingredientsContainer.waitFor({ timeout: 10000 });
+    const hasChildren = await ingredientsContainer.evaluate(
+      (el) => el.childElementCount > 0
+    );
+    expect(hasChildren).toBe(true);
+  });
+});
+
+//<div class="w-full flex flex-col items-center">
+//<div data-testid="overlay" data-popup="modal" class="popup-overlay informationModial-overlay"/>

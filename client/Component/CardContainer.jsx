@@ -2,71 +2,63 @@ import React, { useEffect, useState } from 'react';
 import DrinkCard from './DrinkCard.jsx';
 import RecipeModal from './RecipeModal.jsx';
 
-const CardContainer = (props) => {
-  const [open, setOpen] = React.useState(false);
-  const [selectedCardData, setSelectedCardData] = React.useState({});
-
-  const openModal = () => {
-    setOpen(true);
-  };
-
-  const closeModal = () => setOpen(false);
-
-  //state managment for response
-  const [drinks, setDrinks] = useState([]); //initially drinks is an empty array
-
-  // fetch request to the server to get drinks
+const CardContainer = ({ selectedDrink }) => {
+  const [drinks, setDrinks] = useState([]);
+  const [selectedCardData, setSelectedCardData] = useState(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    //define aysnc function
-    const fetchData = async () => {
+    const fetchDrinks = async () => {
       try {
-        console.log({ liquorSelected });
-        //if no liquor is selected, send the fetch request with 'any' to get a random selection of drinks
-        const liquorSelected = props.drink || 'any';
-        const response = await fetch(
-          `http://localhost:3000/recipe?liquor=${liquorSelected}&limit=45`
+        const isLiquor = ['gin', 'vodka', 'whiskey', 'rum', 'tequila'].includes(
+          selectedDrink.toLowerCase()
         );
-        if (!response.ok) {
-          throw new Error(`Reponse not ok, status ${response.status}`);
-        }
-        const result = await response.json();
-        //result will be an object with key recipes that an array
-        const fetchedDrinks = result.recipes; // result.recipes = an array of the different drinks
-        //update state
-        setDrinks(fetchedDrinks);
-        //need catch error tched drinks: ", fetchedDrinks)
+        const endpoint = isLiquor
+          ? `http://localhost:3000/recipe?liquor=${
+              selectedDrink || 'any'
+            }&limit=75`
+          : `http://localhost:3000/recipe/type/${encodeURIComponent(
+              selectedDrink.toLowerCase()
+            )}`;
+
+        console.log(`Fetching from endpoint: ${endpoint}`);
+
+        const response = await fetch(endpoint);
+        if (!response.ok)
+          throw new Error(`Failed to fetch drinks from ${endpoint}`);
+
+        const { recipes } = await response.json();
+        setDrinks(recipes);
       } catch (error) {
-        //need catch error
-        console.log('Error caught in the cardContainer: ' + error);
+        console.error('Error fetching drinks:', error);
       }
     };
 
-    //call fetchdata function
-    fetchData();
-  }, [props.drinks, props.rnd]);
+    if (selectedDrink) {
+      fetchDrinks();
+    }
+  }, [selectedDrink]);
 
-  //return the drinkCard for each drink
+  const handleModal = (drink) => {
+    setSelectedCardData(drink);
+    setOpen(true);
+  };
+
   return (
-    <div className='card-container'>
-      {/* map through the drinks array and create a drink container for each drink */}
+    <div className='bg-background grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
       {drinks.map((drink, index) => (
         <DrinkCard
-          // key={drink.id}
           key={index}
           drink={drink}
-          openModal={() => {
-            setSelectedCardData(drink);
-            openModal();
-          }}
+          openModal={() => handleModal(drink)}
         />
       ))}
-      {/* render the RecipeModal */}
-      <RecipeModal
-        closeModal={closeModal}
-        open={open}
-        data={selectedCardData}
-      />
+      {open && selectedCardData && (
+        <RecipeModal
+          data={selectedCardData}
+          closeModal={() => setOpen(false)}
+        />
+      )}
     </div>
   );
 };
