@@ -13,7 +13,7 @@ const CardContainer = ({ selectedDrink }) => {
         const response = await fetch(
           `http://localhost:3000/recipe?liquor=${
             selectedDrink || 'any'
-          }&limit=45`
+          }&limit=75`
         );
         if (!response.ok) throw new Error('Failed to fetch drinks');
 
@@ -33,7 +33,7 @@ const CardContainer = ({ selectedDrink }) => {
   };
 
   return (
-    <div className='bg-red-950 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
+    <div className='bg-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-5'>
       {drinks.map((drink, index) => (
         <DrinkCard
           // key={drink.id}
