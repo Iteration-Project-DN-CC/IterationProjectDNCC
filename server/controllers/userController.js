@@ -17,7 +17,7 @@ userController.getUser = async (req, res, next) => {
 
   try {
     const data = await models.User.findOne({ username }); //shove user data here
-    console.log('Data: ', data);
+    // console.log('Data: ', data);
 
     if (data.password === password) {
       res.locals.foundUser = data;
@@ -84,5 +84,52 @@ userController.createUser = async (req, res, next) => {
     });
   }
 };
+
+userController.addIngredients = async (req, res, next) => {
+  //access user data from request
+  console.log('This is the current user: ', req.body.username);
+  console.log('This is what they want to add: ', req.body.addIngredients);
+
+  const username = req.body.username;
+  const addIngredients = req.body.addIngredients;
+
+  try {
+    // Find the correct user
+    const foundUser = await models.User.findOne({ username }); //shove user data here
+    console.log('User: ', foundUser);
+    // Replace user ingredients array with whatever was sent from frontend
+    foundUser.ingredients = addIngredients;
+    await foundUser.save();
+    return next();
+  } catch (error) {
+    return next({
+      log: 'Error in userController.getUser: ' + error,
+      status: 500,
+      message: { err: 'Unable to retrieve user from database.' },
+    });
+  }
+};
+
+userController.fetchIngredients = async (req, res, next) => {
+  console.log('This is the current user: ', req.body.username);
+  const username = req.body.username;
+
+  try {
+    // Find the correct user
+    const foundUser = await models.User.findOne({ username }); //shove user data here
+    console.log('User: ', foundUser);
+    // Send their saved ingredients back
+    res.locals.userIngredients = foundUser.ingredients ;
+    console.log('sending back: ', res.locals.userIngredients);
+    return next();
+  } catch (error) {
+    return next({
+      log: 'Error in userController.getUser: ' + error,
+      status: 500,
+      message: { err: 'Unable to retrieve user from database.' },
+    });
+  }
+
+}
 
 module.exports = userController;

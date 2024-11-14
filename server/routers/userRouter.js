@@ -14,4 +14,18 @@ router.post('/', userController.createUser, (req, res) => {
   return res.status(201).json(res.locals.createdUser);
 });
 
+router.post('/addIngredients', userController.addIngredients, (req, res) => {
+  return res.status(200).json('Successfully saved');
+});
+
+router.post(
+  '/fetchIngredients',
+  userController.fetchIngredients,
+  (req, res) => {
+    return res
+      .status(200)
+      .json({ userIngredients: res.locals.userIngredients });
+  }
+);
+
 module.exports = router;
