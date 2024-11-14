@@ -9,10 +9,11 @@ const IngredientsContainer = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('submitted')
-  }
+    console.log('submitted');
+  };
   return (
     <form
+      id='ingredients'
       className='ingredientsBox'
       autoComplete='off'
       onSubmit={handleSubmit}
