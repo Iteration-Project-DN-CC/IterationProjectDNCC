@@ -50,6 +50,17 @@ userController.createUser = async (req, res, next) => {
       message: { err: 'Incomplete user data provided' },
     });
   }
+  //convert potential new user birthday to Date
+  const userAge = new Date (req.body.birthday)
+
+  //figure out the date corresponding to 21 years old
+  const minAge = new Date ();
+  minAge.setFullYear(minAge.getFullYear()-21);
+
+  //if user is underage, do not proceed with making account. kick back message to front end.
+  if(userAge > minAge){
+    return res.status(403).json({message:'Users must be 21 to create an account!'});
+  }
 
   const userToCreate = {
     username: req.body.username,

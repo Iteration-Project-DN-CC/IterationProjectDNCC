@@ -11,7 +11,7 @@ router.get('/', userController.getUser, (req, res) => {
 
 //create a new user (username, password, date of birth required)
 router.post('/', userController.createUser, (req, res) => {
-  return res.status(200).json(res.locals.createdUser);
+  return res.status(201).json(res.locals.createdUser);
 });
 
 module.exports = router;
