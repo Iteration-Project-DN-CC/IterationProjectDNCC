@@ -5,16 +5,19 @@ import ExploreOptions from './ExploreOptions.jsx';
 
 const UserInput = () => {
 	const [selectedOption, setSelectedOption] = useState(null); // Tracks user selection
+	const [mode, setMode] = useState(null); // Tracks whether "By Liquor" or "By Type"
 	const [ingredientsDisplay, setIngredientsDisplay] = useState(false);
 
 	const handleToggleChange = () => {
 		setIngredientsDisplay((prevState) => !prevState);
 		setSelectedOption(null); // Reset selection when toggling modes
+		setMode(null); // Reset mode
 	};
 
-	const handleQuery = (option, mode) => {
-		console.log(`Querying for ${mode}: ${option}`);
-		setSelectedOption(option); // Save the selected option
+	const handleQuery = (option, queryMode) => {
+		console.log(`Querying for ${queryMode}: ${option}`); // Debug log
+		setSelectedOption(option);
+		setMode(queryMode); // Save the mode ("liquor" or "type")
 	};
 
 	return (
@@ -39,7 +42,12 @@ const UserInput = () => {
 			{!ingredientsDisplay && (
 				<>
 					<ExploreOptions onQuery={handleQuery} />
-					{selectedOption && <CardContainer selectedDrink={selectedOption} />}
+					{selectedOption && (
+						<CardContainer
+							selectedDrink={selectedOption}
+							mode={mode}
+						/>
+					)}
 				</>
 			)}
 

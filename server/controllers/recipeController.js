@@ -2,7 +2,6 @@ const models = require('../models/recipeModel.js');
 
 const recipeController = {};
 
-// Get Recipes by Liquor
 recipeController.getRecipesByLiquor = async (req, res, next) => {
 	try {
 		const { liquor, limit } = req.query;
@@ -22,37 +21,11 @@ recipeController.getRecipesByLiquor = async (req, res, next) => {
 		res.locals.queryResults = data;
 		return next();
 	} catch (error) {
+		console.error('Error in getRecipesByLiquor:', error);
 		return next({
-			log: 'Error in recipeController.getRecipesByLiquor: ' + error,
+			log: 'Error in getRecipesByLiquor',
 			status: 500,
 			message: { err: 'An error occurred while retrieving recipes by liquor.' },
-		});
-	}
-};
-
-// Get Recipes by Type
-recipeController.getRecipesByType = async (req, res, next) => {
-	try {
-		const { type, limit } = req.query;
-		if (!type) {
-			return next({
-				log: 'No type query param',
-				status: 400,
-				message: { err: 'Type query parameter is required.' },
-			});
-		}
-
-		const data = await models.Recipe.find({
-			category: { $regex: type, $options: 'i' },
-		}).limit(Number(limit) || 20);
-
-		res.locals.queryResults = data;
-		return next();
-	} catch (error) {
-		return next({
-			log: 'Error in recipeController.getRecipesByType: ' + error,
-			status: 500,
-			message: { err: 'An error occurred while retrieving recipes by type.' },
 		});
 	}
 };
@@ -99,10 +72,63 @@ recipeController.addRecipe = async (req, res, next) => {
 		res.locals.queryResults = data;
 		return next();
 	} catch (error) {
+		console.error('Error in addRecipe:', error);
 		return next({
-			log: 'Error in recipeController.addRecipe: ' + error,
+			log: 'Error in addRecipe',
 			status: 500,
 			message: { err: 'An error occurred while adding a recipe.' },
+		});
+	}
+};
+
+recipeController.getRecipesByType = async (req, res, next) => {
+	try {
+		const { type } = req.params;
+		if (!type) {
+			return next({
+				log: 'No type query param',
+				status: 400,
+				message: { err: 'Type query parameter is required.' },
+			});
+		}
+
+		let query;
+		switch (type.toLowerCase()) {
+			case 'sour':
+				query = { ingredients: { $in: ['lime juice', 'lemon juice'] } };
+				break;
+			case 'highball':
+				query = { ingredients: { $in: ['soda', 'club soda'] } };
+				break;
+			case 'spirit forward':
+				query = { ingredients: { $size: 2 } };
+				break;
+			case 'fizz':
+				query = { ingredients: { $in: ['soda', 'champagne'] } };
+				break;
+			case 'martini':
+				query = { name: { $regex: '\\bmartini\\b', $options: 'i' } };
+				break;
+			case 'tropical':
+				query = { ingredients: { $in: ['pineapple'] } };
+				break;
+			default:
+				return next({
+					log: 'Invalid type query param',
+					status: 400,
+					message: { err: 'Invalid type query parameter.' },
+				});
+		}
+
+		const data = await models.Recipe.find(query).limit(20);
+		res.locals.queryResults = data;
+		return next();
+	} catch (error) {
+		console.error('Error in getRecipesByType:', error);
+		return next({
+			log: 'Error in getRecipesByType',
+			status: 500,
+			message: { err: 'An error occurred while retrieving recipes by type.' },
 		});
 	}
 };

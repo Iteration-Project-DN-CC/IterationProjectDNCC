@@ -1,101 +1,107 @@
-const models = require('../models/recipeModel.js'); // Declare models only once
+const models = require('../models/recipeModel.js');
 
-const componentsController = {}; // Declare componentsController only once
+const componentsController = {};
 
 componentsController.getIngredients = async (req, res, next) => {
-  try {
-    // Query for ingredients
-    const results = await models.Recipe.aggregate([
-      { $unwind: '$ingredients' }, // Deconstruct ingredients array
-      {
-        $project: {
-          // Normalize the ingredient names to lowercase to eliminate case sensitivity
-          normalizedIngredient: { $toLower: '$ingredients' },
-        },
-      },
-      {
-        $group: {
-          _id: null, // Grouping everything together
-          allIngredients: { $addToSet: '$normalizedIngredient' }, // Remove duplicates
-        },
-      },
-      {
-        $project: {
-          _id: 0, // Do not include the id field
-          ingredients: { $setUnion: ['$allIngredients', []] }, // Join all result ingredients in one result array
-        },
-      },
-    ]);
+	try {
+		const results = await models.Recipe.aggregate([
+			{ $unwind: '$ingredients' },
+			{ $project: { normalizedIngredient: { $toLower: '$ingredients' } } },
+			{
+				$group: {
+					_id: null,
+					allIngredients: { $addToSet: '$normalizedIngredient' },
+				},
+			},
+			{ $project: { _id: 0, ingredients: '$allIngredients' } },
+		]);
 
-    const ingredientsArray = results[0].ingredients;
-    // Result is an array of all lowercase ingredients
-    res.locals.ingredientsList = ingredientsArray;
-    return next();
-  } catch (err) {
-    return next(res.status(500).json({ error: err.message }));
-  }
+		res.locals.ingredientsList = results[0]?.ingredients || [];
+		return next();
+	} catch (err) {
+		console.error('Error in getIngredients:', err);
+		return next(res.status(500).json({ error: err.message }));
+	}
 };
 
 componentsController.getLiquor = async (req, res, next) => {
-  console.log('We are in getLiquor middleware');
-  try {
-    // Query for liquors
-    const results = await models.Recipe.aggregate([
-      {
-        $project: {
-          // Normalize the liquor names to lowercase to eliminate case sensitivity
-          normalizedLiquor: { $toLower: '$liquor' },
-        },
-      },
-      {
-        $group: {
-          _id: null, // Grouping everything together
-          allLiquors: { $addToSet: '$normalizedLiquor' }, // Remove duplicates
-        },
-      },
-      {
-        $project: {
-          _id: 0, // Do not include the id field
-          liquors: { $setUnion: ['$allLiquors', []] }, // Join all result liquors in one result array
-        },
-      },
-    ]);
+	try {
+		const results = await models.Recipe.aggregate([
+			{ $project: { normalizedLiquor: { $toLower: '$liquor' } } },
+			{ $group: { _id: null, allLiquors: { $addToSet: '$normalizedLiquor' } } },
+			{ $project: { _id: 0, liquors: '$allLiquors' } },
+		]);
 
-    const liquorArray = results[0].liquors;
-    // Result is an array of all lowercase liquors
-    res.locals.liquorList = liquorArray;
-    return next();
-  } catch (err) {
-    return next(res.status(500).json({ error: err.message }));
-  }
+		res.locals.liquorList = results[0]?.liquors || [];
+		return next();
+	} catch (err) {
+		console.error('Error in getLiquor:', err);
+		return next(res.status(500).json({ error: err.message }));
+	}
 };
 
 componentsController.getCategory = async (req, res, next) => {
-  console.log('We are in getCategory middleware');
-  try {
-    const { type } = req.query; // Extract type from query parameters
+	try {
+		const { type } = req.query;
+		const results = await models.Recipe.find(
+			type ? { category: { $regex: type, $options: 'i' } } : {}
+		);
 
-    // Query the database for matching categories
-    const results = await models.Recipe.find(
-      type
-        ? { category: { $regex: type, $options: 'i' } } // Case-insensitive search if type provided
-        : {} // Otherwise return all categories
-    );
-
-    // Transform results into a unique list of categories
-    const categoriesArray = [
-      ...new Set(results.map((item) => item.category.toLowerCase())),
-    ];
-
-    res.locals.categoriesList = categoriesArray; // Save categories to res.locals
-    return next();
-  } catch (err) {
-    return next({
-      log: 'Error in componentsController.getCategory: ' + err,
-      status: 500,
-      message: { err: 'An error occurred while retrieving categories.' },
-    });
-  }
+		const categoriesArray = [
+			...new Set(results.map((item) => item.category.toLowerCase())),
+		];
+		res.locals.categoriesList = categoriesArray;
+		return next();
+	} catch (err) {
+		console.error('Error in getCategory:', err);
+		return next({
+			log: 'Error in getCategory',
+			status: 500,
+			message: { err: 'An error occurred while retrieving categories.' },
+		});
+	}
 };
 
-module.exports = componentsController; // Export componentsController
+componentsController.getRecipesByType = async (req, res, next) => {
+	try {
+		const { type, limit } = req.query;
+		if (!type) {
+			return next({
+				log: 'No type query param',
+				status: 400,
+				message: { err: 'Type query parameter is required.' },
+			});
+		}
+
+		let query;
+		switch (type.toLowerCase()) {
+			case 'sour':
+				query = {
+					ingredients: { $in: ['lime juice', 'lemon juice', 'orange juice'] },
+				};
+				break;
+			case 'tropical':
+				query = { ingredients: { $in: ['pineapple'] } };
+				break;
+			default:
+				return next({
+					log: 'Invalid type query param',
+					status: 400,
+					message: { err: 'Invalid type query parameter.' },
+				});
+		}
+
+		const data = await models.Recipe.find(query).limit(Number(limit) || 20);
+		res.locals.queryResults = data;
+		return next();
+	} catch (error) {
+		console.error('Error in getRecipesByType:', error);
+		return next({
+			log: 'Error in getRecipesByType',
+			status: 500,
+			message: { err: 'An error occurred while retrieving recipes by type.' },
+		});
+	}
+};
+
+module.exports = componentsController;
