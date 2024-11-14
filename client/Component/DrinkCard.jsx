@@ -10,7 +10,7 @@ const DrinkCard = ({ drink, openModal }) => {
         className='w-full h-40 object-cover'
       />
       <button
-        className='mt-4 px-4 py-2 bg-peach text-white rounded hover:bg-red-400'
+        className='mt-4 px-4 py-2 bg-peach text-white rounded hover:bg-darkerpeach'
         onClick={openModal}
       >
         See Recipe

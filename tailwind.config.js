@@ -5,13 +5,12 @@ module.exports = {
     extend: {
       colors: {
         peach: '#DF7B6C',
-        darkerpeach: '#CF695A'
+        darkerpeach: '#CF695A',
+      },
+      fontFamily: {
+        sans: ['Montserrat', 'sans-serif'], // set Monstserrat as default sans font
       },
     },
-    //   fontFamily: {
-    //     // Optional: Add custom font families
-    //     sans: ['Nunito', 'Arial', 'sans-serif'],
-    // },
   },
   plugins: [],
 };
